@@ -6,7 +6,7 @@ const router = require('express').Router();
 // const sugang = require('./sugang');
 // const map = require('./map');
 const auth = require('./auth');
-const authMiddleware = require('../../middlewares/auth')
+const authMiddleware = require('../../middlewares/auth');
 
 router.use('/auth', auth);
 // router.use('/shuttle', shuttle);
