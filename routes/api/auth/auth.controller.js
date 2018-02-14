@@ -11,18 +11,20 @@ const config = require('../../../config');
 */
 
 exports.register = (req, res) => {
-	const { username, password, saySomething } = req.body;
+	const { username, email, nickname, password, phone, profile_img } = req.body;
 	const encrypted = crypto.createHmac('sha1', config.secret)
 		.update(password)
 		.digest('base64');
-	User.findOne({ username: username },(err, user) => {
+	User.findOne({ email: email },(err, user) => {
 		if (err) return res.status(500).json({ error: err });
-		if (user) return res.status(406).json({ message:'username exists' });
+		if (user) return res.status(406).json({ message:'email exists' });
 		let newUser = new User({
 			username,
+			email,
+			nickname,
+			phone,
+			profile_img,
 			password: encrypted,
-			// saySomething,
-			// profileImg : 'https://s3.ap-northeast-2.amazonaws.com/reviewany/KakaoTalk_2017-09-25-16-51-00_Photo_65.jpeg'
 		});
 		newUser.save( (err) => {
 			if (err) return res.status(500).json({ error:err });
@@ -32,10 +34,10 @@ exports.register = (req, res) => {
 };
 
 exports.login = (req, res) => {
-	const { username, password } = req.body;
+	const { email, password } = req.body;
 	const secret = req.app.get('jwt-secret');
 
-	User.findOne({ username: username }, (err, user) => {
+	User.findOne({ email: email }, (err, user) => {
 		if (err) return res.status(500).json({ error: err });
 		if (!user) return res.status(406).json({ message:'login failed' });
 		const encrypted = crypto.createHmac('sha1', config.secret)
@@ -45,13 +47,13 @@ exports.login = (req, res) => {
 			jwt.sign(
 				{
 					_id: user._id,
-					username: user.username,
+					email: user.email,
 					admin: user.admin
 				},
 				secret,
 				{
 					expiresIn: '7d',
-					issuer: 'yoonjeewoo',
+					issuer: 'rebay_admin',
 					subject: 'userInfo'
 				}, (err, token) => {
 					if (err) return res.status(406).json({ message:'login failed' });
@@ -64,5 +66,4 @@ exports.login = (req, res) => {
 			return res.status(406).json({ message:'login failed' });
 		}
 	});
-
 };

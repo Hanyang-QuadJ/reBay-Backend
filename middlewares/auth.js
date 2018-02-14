@@ -16,11 +16,11 @@ const authMiddleware = (req, res, next) => {
 	const p = new Promise(
 		(resolve, reject) => {
 			jwt.verify(token, req.app.get('jwt-secret'), (err, decoded) => {
-				if (err) reject(err)
+				if (err) reject(err);
 				resolve(decoded)
 			})
 		}
-	)
+	);
 
 	// if it has failed to verify, it will return an error message
 	const onError = (error) => {
@@ -28,13 +28,13 @@ const authMiddleware = (req, res, next) => {
 			success: false,
 			message: error.message
 		})
-	}
+	};
 
 	// process the promise
 	p.then((decoded) => {
-		req.decoded = decoded
+		req.decoded = decoded;
 		next()
 	}).catch(onError)
-}
+};
 
-module.exports = authMiddleware
+module.exports = authMiddleware;
