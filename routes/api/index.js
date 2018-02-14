@@ -8,6 +8,7 @@ const router = require('express').Router();
 const auth = require('./auth');
 const authMiddleware = require('../../middlewares/auth');
 
+router.use('/auth', authMiddleware);
 router.use('/auth', auth);
 // router.use('/shuttle', shuttle);
 // router.use('/pedalo', pedalo);

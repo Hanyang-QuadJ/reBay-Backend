@@ -10,6 +10,8 @@ const config = require('../../../config');
     }
 */
 
+
+
 exports.register = (req, res) => {
 	const { username, email, nickname, password, phone, profile_img } = req.body;
 	const encrypted = crypto.createHmac('sha1', config.secret)
@@ -48,7 +50,7 @@ exports.login = (req, res) => {
 				{
 					_id: user._id,
 					email: user.email,
-					admin: user.admin
+					username: user.username
 				},
 				secret,
 				{
@@ -67,3 +69,14 @@ exports.login = (req, res) => {
 		}
 	});
 };
+
+exports.me = (req, res) => {
+	User.findById(req.decoded._id)
+	.exec((err, user, next) => {
+		if (err) return res.status(500).json({ error: err });
+		if (!user) return res.status(406).json({ message:'login failed' });
+		return res.status(200).json({
+			user: user
+		})
+	})
+}
