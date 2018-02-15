@@ -36,8 +36,11 @@ const User = new Schema({
 	shopping_list: [{ type: ObjectId, ref: 'Item' }],
 	selling_list: [{type: ObjectId, ref: 'Item'}],
 	owner_rank: {type: Number, default: null},
-	join_date: {type: Date, default: null}
+	join_date: {type: Date, default: null},
+	owner_level: {type: String, default: '브론즈'},
 
+  // 임시장바구니
+	shopping_cart: [{ type: ObjectId, ref: 'Item' }]
 });
 
 
