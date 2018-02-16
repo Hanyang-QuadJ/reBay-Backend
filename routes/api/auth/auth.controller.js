@@ -27,6 +27,8 @@ exports.register = (req, res) => {
 	});
 };
 
+
+
 exports.login = (req, res) => {
 	const { email, password } = req.body;
 	const secret = req.app.get('jwt-secret');
