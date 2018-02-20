@@ -5,6 +5,7 @@ const config = require('../../../config');
 
 
 exports.register = (req, res) => {
+	const secret = req.app.get('jwt-secret');
 	const { username, email, password, phone, profile_img } = req.body;
 	const encrypted = crypto.createHmac('sha1', config.secret)
 		.update(password)
@@ -19,9 +20,26 @@ exports.register = (req, res) => {
 			profile_img,
 			password: encrypted,
 		});
-		newUser.save( (err) => {
+		newUser.save( (err, user) => {
 			if (err) return res.status(500).json({ error:err });
-			return res.status(200).json({ message: 'registered successfully' });
+			jwt.sign(
+				{
+					_id: user._id,
+					email: user.email,
+					username: user.username
+				},
+				secret,
+				{
+					expiresIn: '7d',
+					issuer: 'rebay_admin',
+					subject: 'userInfo'
+				}, (err, token) => {
+					if (err) return res.status(406).json({ message:'login failed' });
+					return res.status(200).json({
+						message: 'registered successfully',
+						token
+					});
+				});
 		});
 	});
 };
