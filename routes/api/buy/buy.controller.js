@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const User = require('../../../models/user');
-// const crypto = require('crypto');
 const config = require('../../../config');
 
 // 구매 상세정보 등록
@@ -24,7 +23,3 @@ exports.register = (req, res) => {
 		});
 	});
 }
-
-// exports.buy = (req, res) => {
-//
-// }

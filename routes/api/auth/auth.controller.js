@@ -13,9 +13,8 @@ exports.register = (req, res) => {
 		if (err) return res.status(500).json({ error: err });
 		if (user) return res.status(406).json({ message:'email exists' });
 		let newUser = new User({
-			username,
 			email,
-			nickname,
+			username,
 			phone,
 			profile_img,
 			password: encrypted,

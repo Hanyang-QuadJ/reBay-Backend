@@ -16,7 +16,7 @@ const Item = new Schema({
 	is_fullbox: Boolean,
 	is_warantee: Boolean,
 	country: String,
-	fundable: String,
+	refundable: String,
 	comments: [{ comment: String }],
 	pictures: [{ picure: String }],
 	content: String,

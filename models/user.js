@@ -8,9 +8,8 @@ const User = new Schema({
 	isBuyer: {type: Boolean, default: false},
 
 	// 필수입력
-	username: {type: String, required: true},
 	email: {type: String, required: true},
-	nickname: {type: String, required: true},
+	username: {type: String, required: true},
 	password: {type: String, required: true},
 	phone: {type: Number, required: true},
 	profile_img: {type: String, default: 'http://www.piachievers.com/img/users-male-2.png'},
@@ -40,6 +39,7 @@ const User = new Schema({
 	owner_rank: {type: Number, default: null},
 	join_date: {type: Date, default: null},
 	owner_level: {type: String, default: '브론즈'},
+	following: [{type: ObjectId, ref:'User'}],
 
 	// 임시장바구니
 	shopping_cart: [{ type: ObjectId, ref: 'Item' }]
