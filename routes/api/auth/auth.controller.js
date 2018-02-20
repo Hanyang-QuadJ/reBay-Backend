@@ -5,7 +5,7 @@ const config = require('../../../config');
 
 
 exports.register = (req, res) => {
-	const { username, email, nickname, password, phone, profile_img } = req.body;
+	const { username, email, password, phone, profile_img } = req.body;
 	const encrypted = crypto.createHmac('sha1', config.secret)
 		.update(password)
 		.digest('base64');
