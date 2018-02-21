@@ -17,6 +17,7 @@
     "glob": "^7.1.2",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.0.0",
+    "line-reader": "^0.4.0",
     "lru-cache": "^4.1.1",
     "mongoose": "^4.11.8",
     "morgan": "~1.8.1",
