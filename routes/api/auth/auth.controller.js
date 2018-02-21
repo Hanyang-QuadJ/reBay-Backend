@@ -1,46 +1,47 @@
 const jwt = require('jsonwebtoken');
-const User = require('../../../models/user');
 const crypto = require('crypto');
+const mysql = require('mysql');
 const config = require('../../../config');
-
+const conn = mysql.createConnection(config);
 
 exports.register = (req, res) => {
 	const secret = req.app.get('jwt-secret');
-	const { username, email, password, phone, profile_img } = req.body;
+	const { username, email, password, phone } = req.body;
 	const encrypted = crypto.createHmac('sha1', config.secret)
 		.update(password)
 		.digest('base64');
-	User.findOne({ email: email },(err, user) => {
-		if (err) return res.status(500).json({ error: err });
-		if (user) return res.status(406).json({ message:'email exists' });
-		let newUser = new User({
-			email,
-			username,
-			phone,
-			profile_img,
-			password: encrypted,
-		});
-		newUser.save( (err, user) => {
-			if (err) return res.status(500).json({ error:err });
-			jwt.sign(
-				{
-					_id: user._id,
-					email: user.email,
-					username: user.username
-				},
-				secret,
-				{
-					expiresIn: '7d',
-					issuer: 'rebay_admin',
-					subject: 'userInfo'
-				}, (err, token) => {
-					if (err) return res.status(406).json({ message:'login failed' });
-					return res.status(200).json({
-						message: 'registered successfully',
-						token
+	conn.query('SELECT * from Users WHERE email=?',[email], (err, rows) => {
+		if (err) throw err;
+		if (rows.length == 0) {
+			conn.query(
+				'INSERT INTO Users(username, password, email, phone) VALUES (?, ?, ?, ?)',
+				[username, encrypted, email, phone],
+				(err, result) => {
+					if (err) throw err;
+					console.log(result);
+					jwt.sign(
+					{
+						_id: result.insertId,
+						email: email
+					},
+					secret,
+					{
+						expiresIn: '7d',
+						issuer: 'rebay_admin',
+						subject: 'userInfo'
+					}, (err, token) => {
+						if (err) return res.status(406).json({ message:'register failed' });
+						return res.status(200).json({
+							message: 'registered successfully',
+							token
+						});
 					});
-				});
-		});
+		  	});
+		} else {
+			return res.status(406).json({
+				message: 'user email exists'
+			})
+		}
 	});
 };
 
@@ -49,34 +50,35 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
 	const { email, password } = req.body;
 	const secret = req.app.get('jwt-secret');
-
-	User.findOne({ email: email }, (err, user) => {
-		if (err) return res.status(500).json({ error: err });
-		if (!user) return res.status(406).json({ message:'login failed' });
-		const encrypted = crypto.createHmac('sha1', config.secret)
-			.update(password)
-			.digest('base64');
-		if (user.password === encrypted) {
-			jwt.sign(
-				{
-					_id: user._id,
-					email: user.email,
-					username: user.username
-				},
-				secret,
-				{
-					expiresIn: '7d',
-					issuer: 'rebay_admin',
-					subject: 'userInfo'
-				}, (err, token) => {
-					if (err) return res.status(406).json({ message:'login failed' });
-					return res.status(200).json({
-						message: 'logged in successfully',
-						token
+	const encrypted = crypto.createHmac('sha1', config.secret)
+		.update(password)
+		.digest('base64');
+	conn.query(
+		'SELECT * from Users WHERE email=? and password=?',
+		[email, encrypted],
+		(err, result) => {
+			if (err) throw err;
+			if (result.length == 0) {
+				return res.status(404).json({ message: 'login failed'});
+			} else {
+				jwt.sign(
+					{
+						_id: result[0].id,
+						email: result[0].email
+					},
+					secret,
+					{
+						expiresIn: '7d',
+						issuer: 'rebay_admin',
+						subject: 'userInfo'
+					}, (err, token) => {
+						if (err) return res.status(406).json({ message:'login failed' });
+						return res.status(200).json({
+							message: 'logged in successfully',
+							token
+						});
 					});
-				});
-		} else {
-			return res.status(406).json({ message:'login failed' });
+			}
 		}
-	});
+	)
 };

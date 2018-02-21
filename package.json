@@ -20,8 +20,11 @@
     "lru-cache": "^4.1.1",
     "mongoose": "^4.11.8",
     "morgan": "~1.8.1",
+    "mysql": "^2.15.0",
+    "path": "^0.12.7",
     "request": "^2.81.0",
     "serve-favicon": "~2.4.2",
+    "swagger-ui": "^3.10.0",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
