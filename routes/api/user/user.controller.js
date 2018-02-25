@@ -4,7 +4,6 @@ const config = require('../../../config');
 const conn = mysql.createConnection(config);
 
 exports.me = (req, res) => {
-
 	conn.query(
 		'SELECT * FROM Users WHERE id=?',
 		[req.decoded._id],
