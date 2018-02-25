@@ -108,3 +108,72 @@ exports.getOneItem = (req, res) => {
 		}
 	)
 }
+
+exports.getComments = (req, res) => {
+	const { item_id } = req.params;
+	conn.query(
+		'SELECT * FROM Comments, Users WHERE Users.id = Comments.user_id and item_id = ?',
+		[item_id],
+		(err, result) => {
+			if (err) throw err;
+			return res.status(200).json({
+				comments: result
+			})
+		}
+	)
+}
+
+exports.writeComments = (req, res) => {
+	const { item_id, comments, score } = req.body;
+	conn.query(
+		'INSERT INTO Comments(user_id, item_id, comments, score) VALUES(?, ?, ?, ?)',
+		[req.decoded._id, item_id, comments, score],
+		(err, result) => {
+			if (err) throw err;
+			return res.status(200).json({
+				message: 'comment successfully added'
+			})
+		}
+	)
+}
+
+exports.createTemp = (req, res) => {
+	const { item_id } = req.params;
+	conn.query(
+		'INSERT INTO Temps(item_id, user_id) VALUES(?, ?)',
+		[item_id, req.decoded._id],
+		(err, result) => {
+			if (err) throw err;
+			return res.json({
+				message: 'temporary item successfully saved'
+			})
+		}
+	)
+}
+
+exports.getTemp = (req, res) => {
+	conn.query(
+		'SELECT * FROM Temps WHERE Temps.user_id = ?',
+		[req.decoded._id],
+		(err, result) => {
+			if (err) throw err;
+			return res.json({
+				temps: result
+			})
+		}
+	)
+}
+
+exports.deleteTemp = (req, res) => {
+	const { temp_id } = req.params;
+	conn.query(
+		'DELETE FROM Temps WHERE id = ?',
+		[temp_id],
+		(err, result) => {
+			if (err) throw err;
+			return res.json({
+				message: 'temporary item successfully deleted'
+			})
+		}
+	)
+}
