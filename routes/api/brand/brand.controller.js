@@ -33,3 +33,17 @@ exports.getBrandList = (req, res) => {
 		}
 	)
 }
+
+exports.getOneBrand = (req, res) => {
+	const { brand_id } = req.body;
+	conn.query(
+		"SELECT * FROM Brands WHERE id = ?",
+		[brand_id],
+		(err, result) => {
+			if (err) throw err;
+			return res.status(200).json({
+				brand: result[0]
+			})
+		}
+	)
+}

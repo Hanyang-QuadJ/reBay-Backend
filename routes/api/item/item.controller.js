@@ -49,7 +49,7 @@ exports.sell = (req, res) => {
 		await piclist_input(result, pic_list);
 		await tags_input(result, tags);
 		return res.status(200).json({
-			message: 'item successfully added'
+			item_id: result.insertId
 		})
 	}
 
@@ -93,6 +93,18 @@ exports.sell = (req, res) => {
 			picandtag_input(result, pic_list, tags);
 		}
 	)
+}
 
-
+exports.getOneItem = (req, res) => {
+	const { item_id } = req.params;
+	conn.query(
+		'select * from Users, Items where Users.id = Items.user_id and Items.id = ?',
+		[item_id],
+		(err, result) => {
+			if (err) throw err;
+			return res.status(200).json({
+				item: result[0]
+			})
+		}
+	)
 }
