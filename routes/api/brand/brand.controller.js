@@ -35,7 +35,7 @@ exports.getBrandList = (req, res) => {
 }
 
 exports.getOneBrand = (req, res) => {
-	const { brand_id } = req.body;
+	const { brand_id } = req.params;
 	conn.query(
 		"SELECT * FROM Brands WHERE id = ?",
 		[brand_id],

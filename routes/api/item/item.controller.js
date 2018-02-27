@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken');
 const mysql = require('mysql');
 const config = require('../../../config');
 const conn = mysql.createConnection(config);
+const AWS = require('aws-sdk');
+AWS.config.region = 'ap-northeast-2';
+const s3 = new AWS.S3();
 
 exports.sell = (req, res) => {
 	const {
@@ -23,14 +26,33 @@ exports.sell = (req, res) => {
 		tags
 	} = req.body;
 
-	let piclist_input = (result, pic_list) => {
+	let pic_input = (result, pic) => {
 		return new Promise((resolve, reject) => {
-			pic_list.forEach((pic) => {
-				conn.query('INSERT INTO Photos(item_id, image_url) VALUES(?, ?)',[result.insertId, pic],(err) => {
+			const d = new Date();
+			d.setUTCHours(d.getUTCHours() + 9);
+			const picKey = d.getFullYear() + '_'
+				+ d.getMonth() + '_'
+				+ d.getDate() + '_'
+				+ d.getTime() + '_'
+				+ d.getSeconds() + '_'
+				+ req.decoded._id + '.jpg';
+			const picUrl = `https://s3.ap-northeast-2.amazonaws.com/rebay-image/${picKey}`;
+			let buf = new Buffer(pic.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+			s3.putObject({
+				Bucket: 'rebay-image',
+				Key: picKey,
+				Body: buf,
+				ACL: 'public-read'
+			}, function (err) {
+				if (err) {
 					if (err) reject(err);
-					resolve();
-				})
-			})
+				} else {
+					conn.query('INSERT INTO Photos(item_id, image_url) VALUES(?, ?)', [result.insertId, picUrl], (err) => {
+						if (err) reject(err);
+						resolve();
+					})
+				}
+			});
 		})
 	}
 
@@ -46,7 +68,9 @@ exports.sell = (req, res) => {
 	}
 
 	async function picandtag_input(result, pic_list, tags) {
-		await piclist_input(result, pic_list);
+		pic_list.forEach(async (pic) => {
+			await pic_input(result, pic);
+		});
 		await tags_input(result, tags);
 		return res.status(200).json({
 			item_id: result.insertId
