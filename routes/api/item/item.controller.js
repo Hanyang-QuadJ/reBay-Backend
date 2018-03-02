@@ -195,8 +195,35 @@ exports.deleteTemp = (req, res) => {
 		[temp_id],
 		(err, result) => {
 			if (err) throw err;
-			return res.json({
+			return res.status(200).json({
 				message: 'temporary item successfully deleted'
+			})
+		}
+	)
+}
+
+exports.getSellList = (req, res) => {
+	conn.query(
+		'SELECT * FROM Items WHERE user_id = ?',
+		[req.decoded._id],
+		(err, result) => {
+			if (err) throw err;
+			return res.status(200).json({
+				result
+			})
+		}
+	)
+}
+
+exports.getPictureList = (req, res) => {
+	const { item_id } = req.params;
+	conn.query(
+		'SELECT * FROM Photos WHERE item_id = ?',
+		[item_id],
+		(err, result) => {
+			if (err) throw err;
+			return res.status(200).json({
+				result
 			})
 		}
 	)
