@@ -11,7 +11,7 @@ router.use('/auth', auth);
 router.use('/user', authMiddleware);
 router.use('/user', user);
 
-router.use('/brand', authMiddleware);
+// router.use('/brand', authMiddleware);
 router.use('/brand', brand);
 
 router.use('/item', authMiddleware);
