@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const controller = require('./search.controller');
 
-router.get('', controller.search);
+router.post('', controller.search);
 
 module.exports = router;
