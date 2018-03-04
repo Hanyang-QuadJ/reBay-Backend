@@ -25,11 +25,13 @@ exports.sell = (req, res) => {
 		sub_content,
 		tags
 	} = req.body;
+	const d = new Date();
+	d.setUTCHours(d.getUTCHours());
 
 	let pic_input = (result, pic) => {
 		return new Promise((resolve, reject) => {
-			const d = new Date();
-			d.setUTCHours(d.getUTCHours() + 9);
+			// const d = new Date();
+			// d.setUTCHours(d.getUTCHours() + 9);
 			const picKey = d.getFullYear() + '_'
 				+ d.getMonth() + '_'
 				+ d.getDate() + '_'
@@ -43,10 +45,11 @@ exports.sell = (req, res) => {
 				Key: picKey,
 				Body: buf,
 				ACL: 'public-read'
-			}, function (err) {
+			}, function (err, response) {
 				if (err) {
 					if (err) reject(err);
 				} else {
+					// console.log(response)
 					conn.query('INSERT INTO Photos(item_id, image_url) VALUES(?, ?)', [result.insertId, picUrl], (err) => {
 						if (err) reject(err);
 						resolve();
@@ -76,7 +79,7 @@ exports.sell = (req, res) => {
 			item_id: result.insertId
 		})
 	}
-
+	
 	conn.query(
 		`INSERT INTO Items(
 			user_id,
@@ -93,8 +96,9 @@ exports.sell = (req, res) => {
 			fullbox,
 			warantee,
 			domestic,
-			refund
-		)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			refund,
+			time
+		)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		[
 			req.decoded._id,
 			item_name,
@@ -110,7 +114,8 @@ exports.sell = (req, res) => {
 			fullbox,
 			warantee,
 			domestic,
-			refund
+			refund,
+			d
 		],
 		(err, result) => {
 			if (err) throw err;
