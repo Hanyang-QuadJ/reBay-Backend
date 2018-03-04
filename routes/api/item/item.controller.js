@@ -5,6 +5,7 @@ const conn = mysql.createConnection(config);
 const AWS = require('aws-sdk');
 AWS.config.region = 'ap-northeast-2';
 const s3 = new AWS.S3();
+const crypto = require("crypto");
 
 exports.sell = (req, res) => {
 	const {
@@ -35,8 +36,7 @@ exports.sell = (req, res) => {
 			const picKey = d.getFullYear() + '_'
 				+ d.getMonth() + '_'
 				+ d.getDate() + '_'
-				+ d.getTime() + '_'
-				+ d.getSeconds() + '_'
+				+ crypto.randomBytes(20).toString('hex') + 
 				+ req.decoded._id + '.jpg';
 			const picUrl = `https://s3.ap-northeast-2.amazonaws.com/rebay-image/${picKey}`;
 			let buf = new Buffer(pic.replace(/^data:image\/\w+;base64,/, ''), 'base64');
