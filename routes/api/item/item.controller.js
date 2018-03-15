@@ -29,10 +29,14 @@ exports.sell = (req, res) => {
 	const d = new Date();
 	d.setUTCHours(d.getUTCHours());
 
-	let pic_input = (result, pic) => {
+	let pic_input = (result, pic, index) => {
 		return new Promise((resolve, reject) => {
 			// const d = new Date();
 			// d.setUTCHours(d.getUTCHours() + 9);
+			let first = false;
+			if (index == 0) {
+				first = true;
+			}
 			const picKey = d.getFullYear() + '_'
 				+ d.getMonth() + '_'
 				+ d.getDate() + '_'
@@ -50,7 +54,7 @@ exports.sell = (req, res) => {
 					if (err) reject(err);
 				} else {
 					// console.log(response)
-					conn.query('INSERT INTO Photos(item_id, image_url) VALUES(?, ?)', [result.insertId, picUrl], (err) => {
+					conn.query('INSERT INTO Photos(item_id, image_url, first) VALUES(?, ?, ?)', [result.insertId, picUrl, first], (err) => {
 						if (err) reject(err);
 						resolve();
 					})
@@ -71,8 +75,8 @@ exports.sell = (req, res) => {
 	}
 
 	async function picandtag_input(result, pic_list, tags) {
-		pic_list.forEach(async (pic) => {
-			await pic_input(result, pic);
+		pic_list.forEach(async (pic, index) => {
+			await pic_input(result, pic, index);
 		});
 		await tags_input(result, tags);
 		return res.status(200).json({
@@ -233,6 +237,18 @@ exports.getPictureList = (req, res) => {
 	conn.query(
 		'SELECT * FROM Photos WHERE item_id = ?',
 		[item_id],
+		(err, result) => {
+			if (err) throw err;
+			return res.status(200).json({
+				result
+			})
+		}
+	)
+}
+
+exports.getRecentItems = (req, res) => {
+	conn.query(
+		'SELECT * FROM Items ORDER BY time DESC LIMIT 10',
 		(err, result) => {
 			if (err) throw err;
 			return res.status(200).json({

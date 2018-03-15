@@ -5,6 +5,7 @@ router.post('/sell', controller.sell);
 router.get('/one/:item_id', controller.getOneItem);
 
 router.get('/all', controller.getSellList);
+router.get('/recent', controller.getRecentItems);
 
 router.post('/comments', controller.writeComments);
 router.get('/comments/:item_id', controller.getComments);
