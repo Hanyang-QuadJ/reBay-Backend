@@ -49,3 +49,15 @@ exports.getOneBrand = (req, res) => {
 		}
 	)
 }
+
+exports.getRecentItems = (req, res) => {
+    conn.query(
+        'SELECT * FROM Items join Photos on Photos.item_id = Items.id WHERE first = 1 ORDER BY time DESC LIMIT 10',
+        (err, result) => {
+            if (err) throw err;
+            return res.status(200).json({
+                result
+            })
+        }
+    )
+}
