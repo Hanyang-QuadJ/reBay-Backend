@@ -18,7 +18,7 @@ router.use('/brand', brand);
 router.use('/item', authMiddleware);
 router.use('/item', item);
 
-router.use('/search', authMiddleware);
+// router.use('/search', authMiddleware);
 router.use('/search', search);
 
 
