@@ -13,8 +13,7 @@ exports.search = (req, res) => {
     min_price,
     index
   } = req.body;
-  let sql =
-    "SELECT * FROM Items join Photos on Items.id = Photos.item_id WHERE ";
+  let sql = "SELECT * FROM Items WHERE ";
 
   if (category_1 == "상관없음") {
     sql += "category_1 is not null and ";
@@ -38,7 +37,6 @@ exports.search = (req, res) => {
   }
 
   sql += `price >= ${min_price} and price <= ${max_price} ORDER BY ID DESC LIMIT 10 OFFSET ${index};`;
-
   conn.query(sql, (err, result) => {
     if (err) throw err;
     return res.status(200).json({
