@@ -28,13 +28,13 @@ exports.search = (req, res) => {
     sql += `season = '${season}' and `
   }
 
-  sql += `price >= ${min_price} and price <= ${max_price} and (id <= ${parseInt(index)+10} and id >= ${parseInt(index)})`
+  sql += `price >= ${min_price} and price <= ${max_price} ORDER BY ID DESC LIMIT 10 OFFSET ${index};`
   conn.query(
     sql, 
     (err, result) => {
       if (err) throw err;
       return res.status(200).json({
-        nextIndex: parseInt(index)+11,
+        nextIndex: parseInt(index)+10,
         result
       })
     }
