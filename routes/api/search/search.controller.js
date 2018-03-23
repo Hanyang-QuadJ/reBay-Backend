@@ -5,7 +5,7 @@ const conn = mysql.createConnection(config);
 
 exports.search = (req, res) => {
   const { category_1, category_2, item_status, season, max_price, min_price, index } = req.body;
-  let sql = "SELECT * FROM Items WHERE ";
+  let sql = "SELECT * FROM Items join Photos on Items.id = Photos.item_id WHERE ";
   
   if (category_1 == '상관없음') {
     sql += 'category_1 is not null and '
@@ -28,7 +28,12 @@ exports.search = (req, res) => {
     sql += `season = '${season}' and `
   }
 
+<<<<<<< HEAD
   sql += `price >= ${min_price} and price <= ${max_price} ORDER BY ID DESC LIMIT 10 OFFSET ${index};`
+=======
+  sql += `price >= ${min_price} and price <= ${max_price} and (id <= ${parseInt(index)+10} and id >= ${parseInt(index)})`
+
+>>>>>>> 330e72a1cbd7193d084e4f4f241e4cbd36825d5f
   conn.query(
     sql, 
     (err, result) => {
