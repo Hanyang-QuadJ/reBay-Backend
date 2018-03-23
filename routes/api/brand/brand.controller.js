@@ -25,29 +25,29 @@ const lineReader = require('line-reader');
 // };
 
 exports.getBrandList = (req, res) => {
-	conn.query(
-		"SELECT * FROM Brands",
-		(err, result) => {
-			if (err) throw err;
-			return res.status(200).json({
-				brands: result
-			})
-		}
-	)
+    conn.query(
+        "SELECT * FROM Brands",
+        (err, result) => {
+            if (err) throw err;
+            return res.status(200).json({
+                brands: result
+            })
+        }
+    )
 }
 
 exports.getOneBrand = (req, res) => {
-	const { brand_id } = req.params;
-	conn.query(
-		"SELECT * FROM Brands WHERE id = ?",
-		[brand_id],
-		(err, result) => {
-			if (err) throw err;
-			return res.status(200).json({
-				brand: result[0]
-			})
-		}
-	)
+    const { brand_id } = req.params;
+    conn.query(
+        "SELECT * FROM Brands WHERE id = ?",
+        [brand_id],
+        (err, result) => {
+            if (err) throw err;
+            return res.status(200).json({
+                brand: result[0]
+            })
+        }
+    )
 }
 
 exports.getRecentItems = (req, res) => {
