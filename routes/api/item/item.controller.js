@@ -140,10 +140,17 @@ exports.getOneItem = (req, res) => {
 				[result1[0].brand_id],
 				(err, result2) => {
 					if (err) throw err;
-					return res.status(200).json({
-						item: result1[0],
-						brand_name: result2[0]
-					})
+					conn.query(
+						'SELECT * FROM Tags WHERE item_id = ?',
+						[item_id],
+						(err, result3) => {
+							return res.status(200).json({
+								item: result1[0],
+								brand_name: result2[0],
+								tags: [result3]
+							})
+						}
+					)
 				}
 			)
 		}
