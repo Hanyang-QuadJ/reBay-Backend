@@ -5,7 +5,7 @@ const conn = mysql.createConnection(config);
 
 exports.search = (req, res) => {
 
-    const { category_1, category_2, item_status, season, max_price, min_price, index } = req.body;
+    const { brand_id, category_1, category_2, item_status, season, max_price, min_price, index } = req.body;
     let sql = "SELECT * FROM Items join Photos on (Items.id = Photos.item_id and Photos.first = 1 ) WHERE ";
 
     if (category_1 == '상관없음') {
