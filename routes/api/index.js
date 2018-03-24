@@ -5,6 +5,8 @@ const user = require('./user');
 const brand = require('./brand');
 const item = require('./item');
 const search = require('./search');
+const no_token = require('./no_token');
+
 const authMiddleware = require('../../middlewares/auth');
 
 router.use('/auth', auth);
@@ -20,6 +22,8 @@ router.use('/item', item);
 
 // router.use('/search', authMiddleware);
 router.use('/search', search);
+
+router.use('/notoken', no_token);
 
 
 module.exports = router;
