@@ -28,7 +28,11 @@ exports.search = (req, res) => {
     } else if (season != '상관없음') {
         sql += `season = '${season}' and `
     }
-
+    if (brand_id == '상관없음') {
+        sql += 'brand_id is not null and '
+    } else if (brand_id != '상관없음') {
+        sql += `brand_id = '${brand_id}' and `
+    }
     sql += `price >= ${min_price} and price <= ${max_price} ORDER BY Items.id DESC LIMIT 10 OFFSET ${index};`
     conn.query(
         sql,
