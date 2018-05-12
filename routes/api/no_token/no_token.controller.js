@@ -42,7 +42,11 @@ exports.getComments = (req, res) => {
 		'SELECT * FROM Comments, Users WHERE Users.id = Comments.user_id and item_id = ?',
 		[item_id],
 		(err, result) => {
-			if (err) throw err;
+			if (err) {
+				return res.status(406).json({
+					err
+				})
+			}
 			return res.status(200).json({
 				comments: result
 			})
@@ -56,7 +60,11 @@ exports.getPictureList = (req, res) => {
 		'SELECT * FROM Photos WHERE item_id = ?',
 		[item_id],
 		(err, result) => {
-			if (err) throw err;
+			if (err) {
+				return res.status(406).json({
+					err
+				})
+			}
 			return res.status(200).json({
 				result
 			})
@@ -64,3 +72,20 @@ exports.getPictureList = (req, res) => {
 	)
 }
 
+exports.getUserById = (req, res) => {
+	const { user_id } = req.params;
+	conn.query(
+		"SELECT * FROM Users WHERE id = ?",
+		[user_id],
+		(err, result) => {
+			if (err) {
+				return res.status(406).json({
+					err
+				})
+			}
+			return res.status(200).json({
+				result
+			})
+		}
+	)
+}
