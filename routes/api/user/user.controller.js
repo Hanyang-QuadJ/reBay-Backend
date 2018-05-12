@@ -10,7 +10,7 @@ exports.me = (req, res) => {
 		(err, result) => {
 			if (err) throw err;
 			return res.status(200).json({
-				user: result
+				result
 			})
 		}
 	)
