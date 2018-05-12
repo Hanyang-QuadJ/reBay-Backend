@@ -163,7 +163,7 @@ exports.getTemp = (req, res) => {
 		(err, result) => {
 			if (err) throw err;
 			return res.json({
-				temps: result
+				result
 			})
 		}
 	)
