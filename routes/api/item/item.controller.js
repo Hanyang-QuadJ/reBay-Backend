@@ -158,7 +158,7 @@ exports.createTemp = (req, res) => {
 
 exports.getTemp = (req, res) => {
 	conn.query(
-		'SELECT * FROM Temps WHERE Temps.user_id = ?',
+		'SELECT * FROM Temps JOIN Items on Temps.item_id = Items.id JOIN Brands on Brands.id = Items.brand_id JOIN Photos on Photos.item_id = Items.id WHERE first = 1 AND Temps.user_id = ?',
 		[req.decoded._id],
 		(err, result) => {
 			if (err) throw err;
