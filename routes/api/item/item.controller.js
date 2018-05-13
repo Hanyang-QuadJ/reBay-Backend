@@ -28,7 +28,6 @@ exports.sell = (req, res) => {
 	} = req.body;
 	const d = new Date();
 	d.setUTCHours(d.getUTCHours());
-
 	let pic_input = (result, pic, index) => {
 		return new Promise((resolve, reject) => {
 			// const d = new Date();
@@ -123,6 +122,7 @@ exports.sell = (req, res) => {
 		],
 		(err, result) => {
 			if (err) throw err;
+			console.log("-----------"+brand_id+"--------------");
 			picandtag_input(result, pic_list, tags);
 		}
 	)
