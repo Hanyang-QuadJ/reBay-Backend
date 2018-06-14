@@ -6,11 +6,13 @@ const brand = require('./brand');
 const item = require('./item');
 const search = require('./search');
 const no_token = require('./no_token');
-
+const pay = require('./pay');
 const authMiddleware = require('../../middlewares/auth');
 
 router.use('/auth', auth);
 
+router.use('/pay', authMiddleware);
+router.use('/pay', pay);
 router.use('/user', authMiddleware);
 router.use('/user', user);
 
