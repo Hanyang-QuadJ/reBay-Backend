@@ -8,7 +8,7 @@ const s3 = new AWS.S3();
 const crypto = require("crypto");
 
 exports.pay = (req, res) => {
-    const { item_id } = req.body;
+    const {item_id} = req.body;
     conn.query(
         `SELECT * FROM Items WHERE id = ${item_id}`,
         (err, item) => {
@@ -18,9 +18,15 @@ exports.pay = (req, res) => {
                 [item.id, req.decoded._id, item.user_id],
                 (err, result) => {
                     if (err) throw err;
-                    return res.status(200).json({
-                        message: 'payment successfully added'
-                    })
+                    conn.query(
+                        `DELETE FROM Items WHERE id=${item_id}`,
+                        (err) => {
+                            if (err) throw err;
+                            return res.status(200).json({
+                                message: 'payment successfully added'
+                            })
+                        }
+                    )
                 }
             )
         }
