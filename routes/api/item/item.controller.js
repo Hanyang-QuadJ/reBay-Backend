@@ -6,6 +6,7 @@ const AWS = require('aws-sdk');
 AWS.config.region = 'ap-northeast-2';
 const s3 = new AWS.S3();
 const crypto = require("crypto");
+const query = require("../common/query");
 
 exports.sell = (req, res) => {
 	const {
@@ -183,15 +184,14 @@ exports.deleteTemp = (req, res) => {
 	)
 }
 
-exports.getSellList = (req, res) => {
-	conn.query(
-		'SELECT * FROM Items WHERE user_id = ?',
-		[req.decoded._id],
-		(err, result) => {
-			if (err) throw err;
-			return res.status(200).json({
-				result
-			})
-		}
-	)
+exports.getSellList = async (req, res) => {
+	const user_id = req.decoded._id;
+	const items = await query.getItemsByUserId(user_id);
+    for (let item of items) {
+        item.image = await query.getImageByItemId(item.id);
+    }
+    return res.status(200).json({
+		items
+	})
 }
+
