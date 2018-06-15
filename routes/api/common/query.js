@@ -9,7 +9,7 @@ const json = (obj) => {
     return JSON.parse(JSON.stringify(obj));
 }
 exports.errorCheck = (obj) => {
-    console.log(obj.err);
+    // console.log(obj.err);
     if (obj.err) return true;
     else return false;
 }
