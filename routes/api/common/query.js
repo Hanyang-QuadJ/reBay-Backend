@@ -52,7 +52,7 @@ exports.createBuy = (item_id,buyer_id,seller_id) => {
             'INSERT INTO Buys(item_id, buyer_id, seller_id) VALUES(?, ?, ?)',
             [item_id, buyer_id, seller_id],
             (err, result) => {
-                if (err) resolve(err);
+                if (err) resolve({err: err});
                 else resolve({result: 1});
             }
         )
