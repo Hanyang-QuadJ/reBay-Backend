@@ -103,6 +103,7 @@ exports.getImageByItemId = (item_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Photos WHERE item_id = ${item_id} and first = 1`, (err, result) => {
             if (err) resolve({err: err});
+            if (result.length === 0) resolve([]);
             else {
                 resolve(result[0]);
             }

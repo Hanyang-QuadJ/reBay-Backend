@@ -214,7 +214,7 @@ exports.deleteTemp = async (req, res) => {
 exports.getSellList = async (req, res) => {
     const user_id = req.decoded._id;
     const items = await query.getItemsByUserId(user_id);
-    err = query.errorCheck(items);
+    err = await query.errorCheck(items);
     if (err) {
         return res.status(400).json({
             message: "fail"
@@ -222,7 +222,7 @@ exports.getSellList = async (req, res) => {
     }
     for (let item of items) {
         item.image = await query.getImageByItemId(item.id);
-        err = query.errorCheck(items.image);
+        err = query.errorCheck(item.image);
         if (err) {
             return res.status(400).json({
                 message: "fail"
