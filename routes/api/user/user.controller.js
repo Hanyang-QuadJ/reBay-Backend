@@ -23,7 +23,7 @@ exports.buyedlist = async (req, res) => {
 		async (err, result)=> {
 			for(let i=0;i<result.length;i++){
 				console.log(result[i].item_id);
-				result[i].item = await getItemByItemId(result[i].item_id);
+				result[i].item = await getItemById(result[i].item_id);
                 result[i].item.image = await getImageByItemId(result[i].item_id);
 			}
 			return res.status(200).json({
@@ -39,7 +39,7 @@ exports.soldlist = async (req, res) => {
         async (err, result)=> {
             for(let i=0;i<result.length;i++){
                 console.log(result[i].item_id);
-                result[i].item = await getItemByItemId(result[i].item_id);
+                result[i].item = await getItemById(result[i].item_id);
                 result[i].item.image = await getImageByItemId(result[i].item_id);
             }
             return res.status(200).json({
