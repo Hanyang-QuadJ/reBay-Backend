@@ -9,7 +9,7 @@ const json = (obj) => {
     return JSON.parse(JSON.stringify(obj));
 }
 exports.errorCheck = (obj) => {
-    // console.log(obj.err);
+    console.log(obj.err);
     if (obj.err) return true;
     else return false;
 }
@@ -72,6 +72,7 @@ exports.getBrandById = (id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Brands WHERE id = ${id}`, (err, result) => {
             if (err) resolve({err: err});
+            if (result.length === 0) resolve([]);
             else {
                 resolve(result[0]);
             }
@@ -80,8 +81,9 @@ exports.getBrandById = (id) => {
 }
 exports.getTempsByUserId = (user_id) => {
     return new Promise((resolve, reject) => {
-        conn.query(`SELECT * FROM Temps WHERE user_id = ${user_id}`, (err, result) => {
+        conn.query(`SELECT * FROM Temps WHERE user_id = ${user_id} and status=1`, (err, result) => {
             if (err) resolve({err: err});
+            if (result.length === 0) resolve([]);
             else {
                 resolve(result);
             }
@@ -92,6 +94,7 @@ exports.getItemById = (item_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Items WHERE id = ${item_id}`, (err, result) => {
             if (err) resolve({err: err});
+            if (result.length === 0) resolve([]);
             else {
                 resolve(result[0]);
             }
@@ -115,12 +118,57 @@ exports.getItemsByUserId = (user_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Items WHERE user_id = ${user_id}`, (err, result) => {
             if (err) resolve({err: err});
+            if (result.length === 0) resolve([]);
             else {
                 resolve(result);
             }
         });
     });
 }
+
+exports.getBuysByBuyerId = (user_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Buys WHERE buyer_id = ${user_id}`, (err, result) => {
+            if (err) resolve({err: err});
+            if (result.length === 0) resolve([]);
+            else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.getBuysBySellerId = (user_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Buys WHERE seller_id = ${user_id}`, (err, result) => {
+            if (err) resolve({err: err});
+            if (result.length === 0) resolve([]);
+            else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+//-----------------------------------------------UPDATE-----------------------------------------------
+//-----------------------------------------------UPDATE-----------------------------------------------
+//-----------------------------------------------UPDATE-----------------------------------------------
+//-----------------------------------------------UPDATE-----------------------------------------------
+//-----------------------------------------------UPDATE-----------------------------------------------
+//-----------------------------------------------UPDATE-----------------------------------------------
+//-----------------------------------------------UPDATE-----------------------------------------------
+//-----------------------------------------------UPDATE-----------------------------------------------
+exports.patchItemStatusToZero = (item_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`UPDATE Items SET status=0 WHERE id=${item_id}`, (err, result) => {
+            if (err) resolve({err: err});
+            else {
+                resolve({result:1});
+            }
+        });
+    })
+}
+
 
 
 //-----------------------------------------------delete-----------------------------------------------

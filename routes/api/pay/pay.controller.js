@@ -24,7 +24,7 @@ exports.pay = async (req, res) => {
             message: "fail"
         })
     }
-    result = await query.deleteItemById(item.id);
+    result = await query.patchItemStatusToZero(item.id);
     err = query.errorCheck(result);
     if (err) {
         return res.status(400).json({
