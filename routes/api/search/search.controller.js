@@ -145,3 +145,20 @@ exports.serachByBrandName = (req, res) => {
         }
     )
 }
+
+exports.searchByTagName = (req, res) => {
+    conn.query(
+        `SELECT Items.id, Tags.title as tag_title, Items.user_id, Items.item_name, brand_id, price, size, season, content, sub_content, category_1, category_2, item_status, fullbox, warantee, domestic, refund, time, status FROM Tags JOIN Items ON Tags.item_id = Items.id WHERE Tags.title = '${req.query.name}' LIMIT 20 OFFSET ${req.query.index}`,
+        async (err, result) => {
+            if (err) return res.status(406).json({ err });
+            for (let i = 0; i < result.length; i++) {
+                result[i].tags = await getTags(result[i].id);
+                result[i].images = await getImages(result[i].id);
+            }
+            await res.status(200).json({
+                nextIndex: parseInt(req.query.index) + parseInt(result.length),
+                result
+            })
+        }
+    )
+}
