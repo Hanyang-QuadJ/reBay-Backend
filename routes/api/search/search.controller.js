@@ -80,7 +80,7 @@ exports.search = (req, res) => {
 
 exports.searchByName = (req, res) => {
     conn.query(
-        `SELECT * FROM Items WHERE item_name LIKE '%${req.query.name}%'`,
+        `SELECT * FROM Items WHERE item_name LIKE '%${req.query.name}%' LIMIT 10 OFFSET ${req.query.index}`,
         async (err, result) => {
             if (err) return res.status(406).json({ err });
             for (let i = 0; i < result.length; i++) {
@@ -88,6 +88,7 @@ exports.searchByName = (req, res) => {
                 result[i].images = await getImages(result[i].id);
             }
             await res.status(200).json({
+                nextIndex: parseInt(req.query.index) + 10,
                 result
             })
         }
