@@ -131,7 +131,7 @@ exports.searchByCategory = (req, res) => {
 
 exports.serachByBrandName = (req, res) => {
     conn.query(
-        `SELECT * FROM Items JOIN Brands WHERE Items.brand_id = Brands.id and (brand_name LIKE '%${req.query.name}%' or brand_name_kor LIKE '%${req.query.name}%') LIMIT 20 OFFSET ${req.query.index}`,
+        `SELECT Items.id as id, item_name, price, size, season, content, sub_content, category_1, category_2, item_status, fullbox, warantee, domestic, refund, time, Brands.id as brand_id,  brand_name, brand_name_kor FROM Items JOIN Brands WHERE Items.brand_id = Brands.id and (brand_name LIKE '%${req.query.name}%' or brand_name_kor LIKE '%${req.query.name}%') LIMIT 20 OFFSET ${req.query.index}`,
         async (err, result) => {
             if (err) return res.status(406).json({ err });
             for (let i = 0; i < result.length; i++) {
