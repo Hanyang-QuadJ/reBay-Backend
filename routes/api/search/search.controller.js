@@ -71,7 +71,7 @@ exports.search = (req, res) => {
         (err, result) => {
             if (err) throw err;
             return res.status(200).json({
-                nextIndex: parseInt(index) + 20,
+                nextIndex: parseInt(index) + parseInt(result.length),
                 result
             })
         }
@@ -88,7 +88,7 @@ exports.searchByName = (req, res) => {
                 result[i].images = await getImages(result[i].id);
             }
             await res.status(200).json({
-                nextIndex: parseInt(req.query.index) + 20,
+                nextIndex: parseInt(req.query.index) + parseInt(result.length),
                 result
             })
         }
@@ -110,7 +110,7 @@ exports.searchByCategory = (req, res) => {
                             result[i].images = await getImages(result[i].id);
                         }
                         await res.status(200).json({
-                            nextIndex: parseInt(req.query.index) + 20,
+                            nextIndex: parseInt(req.query.index) + parseInt(result.length),
                             result
                         })
                     }
@@ -121,10 +121,27 @@ exports.searchByCategory = (req, res) => {
                     result[i].images = await getImages(result[i].id);
                 }
                 await res.status(200).json({
-                    nextIndex: parseInt(req.query.index) + 20,
+                    nextIndex: parseInt(req.query.index) + parseInt(result.length),
                     result
                 })
             }
+        }
+    )
+}
+
+exports.serachByBrandName = (req, res) => {
+    conn.query(
+        `SELECT * FROM Items JOIN Brands WHERE Items.brand_id = Brands.id and (brand_name LIKE '%${req.query.name}%' or brand_name_kor LIKE '%${req.query.name}%') LIMIT 20 OFFSET ${req.query.index}`,
+        async (err, result) => {
+            if (err) return res.status(406).json({ err });
+            for (let i = 0; i < result.length; i++) {
+                result[i].tags = await getTags(result[i].id);
+                result[i].images = await getImages(result[i].id);
+            }
+            await res.status(200).json({
+                nextIndex: parseInt(req.query.index) + parseInt(result.length),
+                result
+            })
         }
     )
 }
