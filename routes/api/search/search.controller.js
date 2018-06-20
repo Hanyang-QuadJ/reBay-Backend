@@ -3,6 +3,30 @@ const mysql = require("mysql");
 const config = require("../../../config");
 const conn = mysql.createConnection(config);
 
+let getTags = (item_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(
+            "SELECT * FROM Tags WHERE item_id = ?",
+            [item_id],
+            (err, result) => {
+                if (err) reject();
+                resolve(result);
+            }
+        )
+    })
+}
+let getImages = (item_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(
+            "SELECT * FROM Photos WHERE item_id = ?",
+            [item_id],
+            (err, result) => {
+                if (err) reject();
+                resolve(result);
+            }
+        )
+    })
+}
 exports.search = (req, res) => {
 
     const { brand_id, category_1, category_2, item_status, season, max_price, min_price, index, condition } = req.body;
@@ -48,6 +72,22 @@ exports.search = (req, res) => {
             if (err) throw err;
             return res.status(200).json({
                 nextIndex: parseInt(index) + 10,
+                result
+            })
+        }
+    )
+}
+
+exports.searchByName = (req, res) => {
+    conn.query(
+        `SELECT * FROM Items WHERE item_name LIKE '%${req.query.name}%'`,
+        async (err, result) => {
+            if (err) return res.status(406).json({ err });
+            for (let i = 0; i < result.length; i++) {
+                result[i].tags = await getTags(result[i].id);
+                result[i].images = await getImages(result[i].id);
+            }
+            await res.status(200).json({
                 result
             })
         }

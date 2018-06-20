@@ -15,6 +15,7 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
     "express": "^4.15.4",
+    "fcm-node": "^1.2.1",
     "glob": "^7.1.2",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.0.0",
