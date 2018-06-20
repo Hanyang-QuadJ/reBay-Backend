@@ -65,13 +65,13 @@ exports.search = (req, res) => {
     } else if (brand_id != '상관없음') {
         sql += `brand_id = '${brand_id}' and `
     }
-    sql += `price >= ${min_price} and price <= ${max_price} ORDER BY ${condition_str} LIMIT 10 OFFSET ${index};`
+    sql += `price >= ${min_price} and price <= ${max_price} ORDER BY ${condition_str} LIMIT 20 OFFSET ${index};`
     conn.query(
         sql,
         (err, result) => {
             if (err) throw err;
             return res.status(200).json({
-                nextIndex: parseInt(index) + 10,
+                nextIndex: parseInt(index) + 20,
                 result
             })
         }
@@ -80,7 +80,7 @@ exports.search = (req, res) => {
 
 exports.searchByName = (req, res) => {
     conn.query(
-        `SELECT * FROM Items WHERE item_name LIKE '%${req.query.name}%' LIMIT 10 OFFSET ${req.query.index}`,
+        `SELECT * FROM Items WHERE item_name LIKE '%${req.query.name}%' LIMIT 20 OFFSET ${req.query.index}`,
         async (err, result) => {
             if (err) return res.status(406).json({ err });
             for (let i = 0; i < result.length; i++) {
@@ -88,9 +88,43 @@ exports.searchByName = (req, res) => {
                 result[i].images = await getImages(result[i].id);
             }
             await res.status(200).json({
-                nextIndex: parseInt(req.query.index) + 10,
+                nextIndex: parseInt(req.query.index) + 20,
                 result
             })
+        }
+    )
+}
+
+exports.searchByCategory = (req, res) => {
+    conn.query(
+        `SELECT * FROM Items WHERE category_1 LIKE '%${req.query.category}%' LIMIT 20 OFFSET ${req.query.index}`,
+        async (err, result) => {
+            if (err) return res.status(406).json({ err });
+            if (result.length == 0) {
+                conn.query(
+                    `SELECT * FROM Items WHERE category_2 LIKE '%${req.query.category}%' LIMIT 20 OFFSET ${req.query.index}`,
+                    async (err, result) => {
+                        if (err) return res.status(406).json({ err });
+                        for (let i = 0; i < result.length; i++) {
+                            result[i].tags = await getTags(result[i].id);
+                            result[i].images = await getImages(result[i].id);
+                        }
+                        await res.status(200).json({
+                            nextIndex: parseInt(req.query.index) + 20,
+                            result
+                        })
+                    }
+                )
+            } else {
+                for (let i = 0; i < result.length; i++) {
+                    result[i].tags = await getTags(result[i].id);
+                    result[i].images = await getImages(result[i].id);
+                }
+                await res.status(200).json({
+                    nextIndex: parseInt(req.query.index) + 20,
+                    result
+                })
+            }
         }
     )
 }
