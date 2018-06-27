@@ -46,7 +46,7 @@ exports.createComment = (user_id, item_id, comments, score) => {
     });
 }
 
-exports.createBuy = (item_id,buyer_id,seller_id) => {
+exports.createBuy = (item_id, buyer_id, seller_id) => {
     return new Promise(resolve => {
         conn.query(
             'INSERT INTO Buys(item_id, buyer_id, seller_id) VALUES(?, ?, ?)',
@@ -59,6 +59,18 @@ exports.createBuy = (item_id,buyer_id,seller_id) => {
     });
 }
 
+exports.createHelp = (user_id, ask) => {
+    return new Promise(resolve => {
+        conn.query(
+            'INSERT INTO Helps(user_id, ask) VALUES(?, ?)',
+            [user_id, ask],
+            (err, result) => {
+                if (err) resolve({err: err});
+                else resolve({result: 1});
+            }
+        )
+    });
+}
 
 //-----------------------------------------------get-----------------------------------------------
 //-----------------------------------------------get-----------------------------------------------
@@ -150,6 +162,29 @@ exports.getBuysBySellerId = (user_id) => {
     });
 }
 
+exports.getHelpsByUserId = (user_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Helps WHERE user_id = ${user_id}`, (err, result) => {
+            if (err) resolve({err: err});
+            if (result.length === 0) resolve([]);
+            else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.getHelpById = (id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Helps WHERE id = ${id}`, (err, result) => {
+            if (err) resolve({err: err});
+            if (result.length === 0) resolve([]);
+            else {
+                resolve(result[0]);
+            }
+        });
+    });
+}
 //-----------------------------------------------UPDATE-----------------------------------------------
 //-----------------------------------------------UPDATE-----------------------------------------------
 //-----------------------------------------------UPDATE-----------------------------------------------
@@ -163,14 +198,22 @@ exports.patchItemStatusToZero = (item_id) => {
         conn.query(`UPDATE Items SET status=0 WHERE id=${item_id}`, (err, result) => {
             if (err) resolve({err: err});
             else {
-                resolve({result:1});
+                resolve({result: 1});
             }
         });
     })
 }
 
-
-
+exports.patchHelps = (id, ask, answer) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`UPDATE Helps SET ask = '${ask}', answer='${answer}' WHERE id=${id}`, (err, result) => {
+            if (err) resolve({err: err});
+            else {
+                resolve({result: 1});
+            }
+        });
+    })
+}
 //-----------------------------------------------delete-----------------------------------------------
 //-----------------------------------------------delete-----------------------------------------------
 //-----------------------------------------------delete-----------------------------------------------
@@ -193,6 +236,17 @@ exports.deleteTempById = (id) => {
 exports.deleteItemById = (id) => {
     return new Promise((resolve, reject) => {
         conn.query(`DELETE FROM Items WHERE id = ${id}`, (err, result) => {
+            if (err) resolve({err: err});
+            else {
+                resolve(result);
+            }
+        });
+    })
+}
+
+exports.deleteHelpById = (id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`DELETE FROM Helps WHERE id = ${id}`, (err, result) => {
             if (err) resolve({err: err});
             else {
                 resolve(result);
