@@ -234,3 +234,30 @@ exports.getSellList = async (req, res) => {
     })
 }
 
+exports.itemLike = (req, res) => {
+    const { item_id } = req.params;
+    conn.query(
+        `UPDATE Items SET like_cnt = like_cnt+1 WHERE id = ${item_id}`,
+        (err) => {
+            if (err) {
+                return res.status(400).json({
+                    message: "fail"
+                })
+            }
+            conn.query(
+                "INSERT INTO Likes(item_id, user_id) VALUES (?, ?)",
+                [item_id, req.decoded._id],
+                (err, result) => {
+                    if (err) {
+                        return res.status(400).json({
+                            message: "fail"
+                        })
+                    }
+                    return res.status(200).json({
+                        result
+                    })
+                }
+            )
+        }
+    )
+}
