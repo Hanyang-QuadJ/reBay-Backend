@@ -59,11 +59,11 @@ exports.createBuy = (item_id, buyer_id, seller_id) => {
     });
 }
 
-exports.createHelp = (user_id, ask) => {
+exports.createHelp = (user_id, ask,seller_id) => {
     return new Promise(resolve => {
         conn.query(
-            'INSERT INTO Helps(user_id, ask) VALUES(?, ?)',
-            [user_id, ask],
+            'INSERT INTO Helps(user_id, ask,seller_id) VALUES(?, ?, ?)',
+            [user_id, ask, seller_id],
             (err, result) => {
                 if (err) resolve({err: err});
                 else resolve({result: 1});
@@ -80,6 +80,18 @@ exports.createHelp = (user_id, ask) => {
 //-----------------------------------------------get-----------------------------------------------
 //-----------------------------------------------get-----------------------------------------------
 //-----------------------------------------------get-----------------------------------------------
+exports.getUserByUserId = (id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Users WHERE id = ${id}`, (err, result) => {
+            if (err) resolve({err: err});
+            if (result.length === 0) resolve([]);
+            else {
+                resolve(result[0]);
+            }
+        });
+    });
+}
+
 exports.getBrandById = (id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Brands WHERE id = ${id}`, (err, result) => {
