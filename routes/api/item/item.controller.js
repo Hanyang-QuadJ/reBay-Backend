@@ -220,15 +220,16 @@ exports.getSellList = async (req, res) => {
             message: "fail"
         })
     }
-    for (let item of items) {
-        item.image = await query.getImageByItemId(item.id);
-        err = query.errorCheck(item.image);
-        if (err) {
-            return res.status(400).json({
-                message: "fail"
-            })
-        }
-    }
+    console.log(items);
+    // for (let item of items) {
+    //     item.image = await query.getImageByItemId(item.id);
+    //     err = query.errorCheck(item.image);
+    //     if (err) {
+    //         return res.status(400).json({
+    //             message: "fail"
+    //         })
+    //     }
+    // }
     return res.status(200).json({
         items
     })
