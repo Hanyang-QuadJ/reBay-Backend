@@ -32,14 +32,14 @@ exports.createHelp = async (req, res) => {
     err = query.errorCheck(item);
     if (err) {
         return res.status(400).json({
-            message: "fail"
+            message: "getItemById Fail"
         })
     }
     user = await query.getUserByUserId(seller_id);
     err = query.errorCheck(user);
     if (err) {
         return res.status(400).json({
-            message: "fail"
+            message: "getUserByUserId Fail"
         })
     }
     message.to = user.fcm_token;
@@ -48,7 +48,7 @@ exports.createHelp = async (req, res) => {
     err = query.errorCheck(result);
     if (err) {
         return res.status(400).json({
-            message: "fail"
+            message: "createHelp Fail"
         })
     }
     fcm.send(message, function (err, response) {
