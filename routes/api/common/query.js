@@ -140,6 +140,7 @@ exports.getImageByItemId = (item_id) => {
 
 exports.getItemsByUserId = (user_id) => {
     return new Promise((resolve, reject) => {
+        console.log(user_id);
         conn.query(`SELECT * FROM Items WHERE user_id = ${user_id}`, (err, result) => {
             if (err) resolve({err: err});
             if (result.length === 0) resolve([]);

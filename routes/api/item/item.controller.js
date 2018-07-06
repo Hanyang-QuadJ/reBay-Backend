@@ -213,6 +213,7 @@ exports.deleteTemp = async (req, res) => {
 
 exports.getSellList = async (req, res) => {
     const user_id = req.decoded._id;
+    
     const items = await query.getItemsByUserId(user_id);
     err = await query.errorCheck(items);
     if (err) {
