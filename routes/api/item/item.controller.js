@@ -170,37 +170,21 @@ exports.getTemp = async (req, res) => {
         })
     }
     for (temp of temps) {
-        item_object = await query.getItemById(temp.item_id);
-        temp.category_1 = item_object.category_1;
-        temp.category_2 = item_object.category_2;
-        temp.content = item_object.content;
-        temp.domestic = item_object.domestic;
-        temp.fullbox = item_object.fullbox;
-        temp.item_id = item_object.id;
-        temp.item_name = item_object.item_name;
-        temp.item_status = item_object.item_status;
-        temp.like_cnt = item_object.like_cnt;
-        temp.price = item_object.price;
+        temp.item = await query.getItemById(temp.item_id);
         err = query.errorCheck(temp.item);
         if (err) {
             return res.status(400).json({
                 message: "fail"
             })
         }
-        brand_object = await query.getBrandById(temp.item.brand_id);
-        
-        temp.brand_id = brand_object.id;
-        temp.brand_name = brand_object.brand_name;
-        temp.brand_name_kor = brand_object.brand_name_kor;
-
+        temp.brand = await query.getBrandById(temp.item.brand_id);
         err = query.errorCheck(temp.brand);
         if (err) {
             return res.status(400).json({
                 message: "fail"
             })
         }
-        temp.image_url = await query.getImageByItemId(temp.item_id);
-
+        temp.image = await query.getImageByItemId(temp.item_id);
         err = query.errorCheck(temp.image);
         if (err) {
             return res.status(400).json({
