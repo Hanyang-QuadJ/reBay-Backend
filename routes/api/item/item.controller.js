@@ -213,7 +213,6 @@ exports.deleteTemp = async (req, res) => {
 
 exports.getSellList = async (req, res) => {
     const user_id = req.decoded._id;
-    
     const items = await query.getItemsByUserId(user_id);
     err = await query.errorCheck(items);
     if (err) {
@@ -221,16 +220,15 @@ exports.getSellList = async (req, res) => {
             message: "fail"
         })
     }
-    console.log(items);
-    // for (let item of items) {
-    //     item.image = await query.getImageByItemId(item.id);
-    //     err = query.errorCheck(item.image);
-    //     if (err) {
-    //         return res.status(400).json({
-    //             message: "fail"
-    //         })
-    //     }
-    // }
+    for (let item of items) {
+        item.image = await query.getImageByItemId(item.id);
+        err = query.errorCheck(item.image);
+        if (err) {
+            return res.status(400).json({
+                message: "fail"
+            })
+        }
+    }
     return res.status(200).json({
         items
     })
