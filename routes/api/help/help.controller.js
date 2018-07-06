@@ -44,7 +44,7 @@ exports.createHelp = async (req, res) => {
     }
     message.to = user.fcm_token;
     message.notification.body = item.item_name+" 물건에 누군가 상담을 요청했습니다.";
-    result = await query.createHelp(req.decoded._id, ask, seller_id);
+    result = await query.createHelp(req.decoded._id, ask, seller_id, item_id);
     err = query.errorCheck(result);
     if (err) {
         return res.status(400).json({
