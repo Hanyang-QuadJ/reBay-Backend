@@ -55,12 +55,12 @@ var serverKey = 'AAAAyS0H1u0:APA91bFX9VjAXOe6hGbGu7CvRQg_qRZzFdOjwY_qper2qVxpiY6
 var fcm = new FCM(serverKey);
 
 var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-	to: 'cZTG3Ch7RGQ:APA91bGhYr89_ywkzUB4da1uogHThZyr4eX1ut42RAIlPN6ik9OSSzc4xmJ9EayONQubCesxFaOlVpb0uuOL79YJ6Wu0UVhIOLUesivFUxeSxWxkDSqY3ivK3ULyomszyHzXmdGt8pkL',
+	to: 'f0MtLpxg-tk:APA91bE0FF4peHmGtPcW5bWedKGXNglbrPYRAEAVbdkdyMKXOSiV1uVqIvhXilff_tGduJozH4wLnkrJ3gONLKFI7MURHQdI8hYNoQLgpwXfj8vu4SZFtQym6sKZl-s5dk2JkyKGz5Ocmh81cLkyhVI5yJXIoIxqXQ',
 	collapse_key: 'your_collapse_key',
 
 	notification: {
 		title: 'reBay',
-		body: '신현종님의 Gucci가방이 성공적으로 판매완료 되었습니다.'
+		body: '현종아 대체 언제 끝나냐 이거'
 	},
 
 	data: {  //you can send only notification or only data(or include both)
