@@ -5,5 +5,7 @@ router.post('', controller.createHelp);
 router.delete('/:id', controller.deleteHelp);
 router.patch('', controller.modifyHelp);
 router.get('', controller.getHelps);
+router.get('/sell/:id', controller.getHelpsBySellerId);
 router.get('/:id', controller.getHelpById);
+
 module.exports = router;
