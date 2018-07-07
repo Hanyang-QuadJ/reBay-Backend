@@ -93,7 +93,10 @@ exports.createBuy = (item_id, buyer_id, seller_id) => {
 exports.createHelp = (user_id, ask, seller_id, item_id) => {
     return new Promise(resolve => {
         conn.query(
-            'INSERT INTO Helps(user_id, ask,seller_id,item_id) VALUES(?, ?, ?, ?)',
+
+
+
+            'INSERT INTO Helps(user_id, ask,seller_id, item_id) VALUES(?, ?, ?, ?)',
             [user_id, ask, seller_id, item_id],
             (err, result) => {
                 if (err) resolve({err: err});
@@ -137,7 +140,7 @@ exports.getBrandById = (id) => {
 }
 exports.getTempsByUserId = (user_id) => {
     return new Promise((resolve, reject) => {
-        conn.query(`SELECT * FROM Temps WHERE user_id = ${user_id} and status=1`, (err, result) => {
+        conn.query(`SELECT * FROM Temps WHERE user_id = ${user_id}`, (err, result) => {
             if (err) resolve({err: err});
             if (result.length === 0) resolve([]);
             else {
@@ -172,6 +175,7 @@ exports.getImageByItemId = (item_id) => {
 
 exports.getItemsByUserId = (user_id) => {
     return new Promise((resolve, reject) => {
+        // console.log(user_id);
         conn.query(`SELECT * FROM Items WHERE user_id = ${user_id}`, (err, result) => {
             if (err) resolve({err: err});
             if (result.length === 0) resolve([]);

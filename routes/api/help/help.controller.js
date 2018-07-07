@@ -15,7 +15,7 @@ exports.createHelp = async (req, res) => {
     err = query.errorCheck(item);
     if (err) {
         return res.status(400).json({
-            message: "fail"
+            message: "getItemById Fail"
         })
     }
 
@@ -23,9 +23,10 @@ exports.createHelp = async (req, res) => {
     err = query.errorCheck(buyer);
     if (err) {
         return res.status(400).json({
-            message: "fail"
+            message: "getUserByUserId Fail"
         })
     }
+
 
     seller = await query.getUserByUserId(seller_id);
     err = query.errorCheck(seller);
@@ -35,11 +36,14 @@ exports.createHelp = async (req, res) => {
         })
     }
 
+
+
+
     result = await query.createHelp(req.decoded._id, ask, seller_id, item_id);
     err = query.errorCheck(result);
     if (err) {
         return res.status(400).json({
-            message: "fail"
+            message: "createHelp Fail"
         })
     }
 
