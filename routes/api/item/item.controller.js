@@ -132,106 +132,71 @@ exports.sell = (req, res) => {
 exports.writeComments = async (req, res) => {
     const {item_id, comments, score} = req.body;
     const user_id = req.decoded._id;
-    result = await query.createComment(user_id, item_id, comments, score);
-    err = query.errorCheck(result);
-    if (err === true) {
-        return res.status(400).json({
-            message: "fail"
+    try {
+        result = await query.createComment(user_id, item_id, comments, score);
+        return res.status(200).json({
+            message: "success"
         })
-    }
-    return res.status(200).json({
-        message: "success"
-    })
+    } catch (err) {
+        return res.status(400).json(err);
+    } 
 }
 
 exports.createTemp = async (req, res) => {
     const item_id = req.params;
-    const user_id = req.decoded._id;
-    result = await query.createTemp(item_id, user_id);
-    err = query.errorCheck(result);
-    if (err === true) {
-        return res.status(400).json({
-            message: "fail"
-        })
+    try {
+        result = await query.createTemp(item_id, req.decoded._id);
+        return res.status(200).json({
+            message: "success"
+        });
+    } catch (err) {
+        return res.status(400).json(err);
     }
-    return res.status(200).json({
-        message: "success"
-    });
 }
 
 exports.getTemp = async (req, res) => {
     let err = false;
     user_id = req.decoded._id;
-    const temps = await query.getTempsByUserId(user_id);
-    err = query.errorCheck(temps);
-    if (err === true) {
-        return res.status(400).json({
-            message: "fail"
-        })
+    try {
+        const temps = await query.getTempsByUserId(user_id);
+        for (temp of temps) {
+            temp.item = await query.getItemById(temp.item_id);
+            temp.brand = await query.getBrandById(temp.item.brand_id);
+            temp.image = await query.getImageByItemId(temp.item_id);
+        }
+        return res.status(200).json({
+            temps
+        });
+    } catch (err) {
+        return res.status(400).json(err);
     }
-    for (temp of temps) {
-        temp.item = await query.getItemById(temp.item_id);
-        err = query.errorCheck(temp.item);
-        if (err) {
-            return res.status(400).json({
-                message: "fail"
-            })
-        }
-        temp.brand = await query.getBrandById(temp.item.brand_id);
-        err = query.errorCheck(temp.brand);
-        if (err) {
-            return res.status(400).json({
-                message: "fail"
-            })
-        }
-        temp.image = await query.getImageByItemId(temp.item_id);
-        err = query.errorCheck(temp.image);
-        if (err) {
-            return res.status(400).json({
-                message: "fail"
-            })
-        }
-    }
-    return res.status(200).json({
-        temps
-    });
 }
 
 exports.deleteTemp = async (req, res) => {
     const {temp_id} = req.params;
-    result = await query.deleteTempById(temp_id);
-    err = query.errorCheck(result);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
-        })
+    try {
+        result = await query.deleteTempById(temp_id);
+        return res.status(200).json({
+            message: "Success"
+        });
+    } catch (err) {
+        return res.status(400).json(err);
     }
-    return res.status(200).json({
-        message: "Success"
-    })
 }
 
 exports.getSellList = async (req, res) => {
     const user_id = req.decoded._id;
-    const items = await query.getItemsByUserId(user_id);
-    err = await query.errorCheck(items);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
-        })
-    }
-    for (let item of items) {
-        item.image = await query.getImageByItemId(item.id);
-        err = query.errorCheck(item.image);
-        if (err) {
-            return res.status(400).json({
-                message: "fail"
-            })
+    try {
+        const items = await query.getItemsByUserId(user_id);
+        for (let item of items) {
+            item.image = await query.getImageByItemId(item.id);
         }
-    }
-    return res.status(200).json({
-        items
-    })
+        return res.status(200).json({
+            items
+        })
+    } catch (err) {
+        return res.status(400).json(err);
+    }   
 }
 
 exports.itemLike = (req, res) => {
@@ -264,45 +229,32 @@ exports.itemLike = (req, res) => {
 
 exports.itemLikeCancel = async(req, res) => {
     const { item_id } = req.params;
-    // const { user_id } = req.decoded._id;
-    const isLiked = await query.checkIsLiked(req.decoded._id, item_id);
-    err = await query.errorCheck(isLiked);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
-        })
-    }
-    if (isLiked) { // 좋아요가 되어있음
-        const isDeleted = await query.deleteLikeByUserId(req.decoded._id, item_id);
-        err = await query.errorCheck(isDeleted);
-        if (err) {
-            return res.status(400).json({
-                message: "fail"
-            })
-        } else {
+    try {
+        const isLiked = await query.checkIsLiked(req.decoded._id, item_id);
+        if (isLiked) { // 좋아요가 되어있음
+            await query.deleteLikeByUserId(req.decoded._id, item_id);
             return res.status(200).json({
                 message: 'Successfully Canceled'
             })
+        } else { // 좋아요가 되어있지 않음
+            return res.status(200).json({
+                isLiked: false
+            })
         }
-    } else { // 좋아요가 되어있지 않음
-        return res.status(200).json({
-            isLiked: false
-        })
+    } catch (err) {
+        return res.status(400).json(err);
     }
+    
 }
 
 exports.itemLikeCheck = async(req, res) => {
     const { item_id } = req.params;
-    // const { user_id } = req.decoded._id;
-    const isLiked = await query.checkIsLiked(req.decoded._id, item_id);
-    err = await query.errorCheck(isLiked);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
+    try {
+        const isLiked = await query.checkIsLiked(req.decoded._id, item_id);
+        return res.status(200).json({
+            isLiked: isLiked
         })
+    } catch (err) {
+        return res.status(400).json(err);
     }
-    // await console.log(isLiked);
-    return res.status(200).json({
-        isLiked: isLiked
-    })
 }
