@@ -123,6 +123,12 @@ exports.getHelpsBySellerId = async (req, res) => {
     console.log(id);
 
     helps = await query.getHelpsBySellerId(id);
+    for(help of helps){
+        item = await query.getItemById(help.item_id);
+        help.item = item;
+        image = await query.getImageByItemId(help.item_id);
+        help.image = image;
+    }
     err = query.errorCheck(helps);
     if (err) {
         return res.status(400).json({

@@ -51,11 +51,6 @@ exports.sendMessage = (token, body) => {
 exports.createTemp = (item_id, user_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`INSERT INTO Temps(item_id, user_id) VALUES(${item_id}, ${user_id})`, (err, result) =>  {
-
-
-
-
-
             if (err) resolve({err: err});
             else {
                 resolve({result: 1});
@@ -93,9 +88,6 @@ exports.createBuy = (item_id, buyer_id, seller_id) => {
 exports.createHelp = (user_id, ask, seller_id, item_id) => {
     return new Promise(resolve => {
         conn.query(
-
-
-
             'INSERT INTO Helps(user_id, ask,seller_id, item_id) VALUES(?, ?, ?, ?)',
             [user_id, ask, seller_id, item_id],
             (err, result) => {
