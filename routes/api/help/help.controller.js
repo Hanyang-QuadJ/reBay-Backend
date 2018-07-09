@@ -10,55 +10,20 @@ const query = require("../common/query");
 
 exports.createHelp = async (req, res) => {
     const {ask, seller_id, item_id} = req.body;
-
-    item = await query.getItemById(item_id);
-    err = query.errorCheck(item);
-    if (err) {
-        return res.status(400).json({
-            message: "getItemById Fail"
-        })
+    try{
+        item = await query.getItemById(item_id);
+        buyer = await query.getUserByUserId(req.decoded._id);
+        seller = await query.getUserByUserId(seller_id);
+        result = await query.createHelp(req.decoded._id, ask, seller_id, item_id);
+        message = buyer.username + " 님이 판매물건 " + item.item_name + " 에 대해 문의했습니다.";
+        sendMessageResult = await query.sendMessage(seller.fcm_token, message);
+        return res.status(200).json({
+            message: "success"
+        });
     }
-
-    buyer = await query.getUserByUserId(req.decoded._id)
-    err = query.errorCheck(buyer);
-    if (err) {
-        return res.status(400).json({
-            message: "getUserByUserId Fail"
-        })
+    catch(err){
+        return res.status(400).json(err);
     }
-
-
-    seller = await query.getUserByUserId(seller_id);
-    err = query.errorCheck(seller);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
-        })
-    }
-
-
-
-
-    result = await query.createHelp(req.decoded._id, ask, seller_id, item_id);
-    err = query.errorCheck(result);
-    if (err) {
-        return res.status(400).json({
-            message: "createHelp Fail"
-        })
-    }
-
-    message = buyer.username + " 님이 판매물건 " + item.item_name + " 에 대해 문의했습니다.";
-    sendMessageResult = await query.sendMessage(seller.fcm_token, message);
-    err = query.errorCheck(sendMessageResult);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
-        })
-    }
-
-    return res.status(200).json({
-        message: "success"
-    })
 }
 
 exports.getHelps = async (req, res) => {
@@ -88,51 +53,43 @@ exports.getHelpById = async (req, res) => {
 
 exports.modifyHelp = async (req, res) => {
     const {id, ask, answer} = req.body;
-    result = await query.patchHelps(id, ask, answer);
-    err = query.errorCheck(result);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
+    try{
+        result = await query.patchHelps(id, ask, answer);
+        return res.status(200).json({
+            message: "success"
         })
     }
-    return res.status(200).json({
-        message: "success"
-    })
+    catch(err){
+        return res.status(400).json(err)
+    }
 }
 
 exports.deleteHelp = async (req, res) => {
     const {id} = req.params;
-    result = await query.deleteHelpById(id);
-    err = query.errorCheck(result);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
+    try{
+        result = await query.deleteHelpById(id);
+        return res.status(200).json({
+            message: "success"
         })
     }
-    return res.status(200).json({
-        message: "success"
-    })
+    catch(err){
+        return res.status(400).json(err);
+    }
 }
 
 exports.getHelpsBySellerId = async (req, res) => {
     const {id} = req.params;
-
-    console.log(id);
-
-    helps = await query.getHelpsBySellerId(id);
-    for(help of helps){
-        item = await query.getItemById(help.item_id);
-        help.item = item;
-        image = await query.getImageByItemId(help.item_id);
-        help.image = image;
+    try{
+        helps = await query.getHelpsBySellerId(id);
+        for(help of helps){
+            item = await query.getItemById(help.item_id);
+            help.item = item;
+            image = await query.getImageByItemId(help.item_id);
+            help.image = image;
+        }
+        return res.status(200).json(helps);
     }
-    err = query.errorCheck(helps);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
-        })
+    catch(err){
+        return res.status(400).json(err);
     }
-    return res.status(200).json({
-        helps
-    })
 }

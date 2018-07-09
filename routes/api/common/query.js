@@ -27,7 +27,7 @@ exports.sendMessage = (token, body) => {
     };
     return new Promise((resolve, reject) => {
         fcm.send(message, function (err, response) {
-            if (err) resolve(err);
+            if (err) reject(err);
             else {
                 resolve(true);
             }
