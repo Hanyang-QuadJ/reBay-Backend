@@ -62,25 +62,19 @@ exports.createHelp = async (req, res) => {
 }
 
 exports.getHelps = async (req, res) => {
-
-    helps = await query.getHelpsByUserId(req.decoded._id)
-        .catch(err=>{return res.status(400).json(err)})
-
-    for(help of helps){
-        item = await query.getItemById(help.item_id);
-        help.item = item;
-        image = await query.getImageByItemId(help.item_id);
-        help.image = image;
+    try{
+        helps = await query.getHelpsByUserId(req.decoded._id)
+        for(help of helps){
+            item = await query.getItemById(help.item_id);
+            help.item = item;
+            image = await query.getImageByItemId(help.item_id);
+            help.image = image;
+        }
+        return res.status(200).json(helps);
     }
-    err = query.errorCheck(helps);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
-        })
+    catch(err){
+        return res.status(400).json(err);
     }
-    return res.status(200).json({
-        helps
-    })
 }
 
 exports.getHelpById = async (req, res) => {

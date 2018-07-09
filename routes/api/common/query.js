@@ -11,11 +11,7 @@ const fcm = new FCM(serverKey);
 const json = (obj) => {
     return JSON.parse(JSON.stringify(obj));
 }
-exports.errorCheck = (obj) => {
-    console.log(obj.err);
-    if (obj.err) return true;
-    else return false;
-}
+
 exports.sendMessage = (token, body) => {
     const message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
         to: token,
@@ -31,10 +27,9 @@ exports.sendMessage = (token, body) => {
     };
     return new Promise((resolve, reject) => {
         fcm.send(message, function (err, response) {
-            if (err) {
-                resolve({err: err})
-            } else {
-                resolve({result: 1})
+            if (err) resolve(err);
+            else {
+                resolve(true);
             }
         });
     })
@@ -51,9 +46,9 @@ exports.sendMessage = (token, body) => {
 exports.createTemp = (item_id, user_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`INSERT INTO Temps(item_id, user_id) VALUES(${item_id}, ${user_id})`, (err, result) =>  {
-            if (err) resolve({err: err});
+            if (err) reject(err);
             else {
-                resolve({result: 1});
+                resolve(true);
             }
         });
     });
@@ -64,10 +59,8 @@ exports.createComment = (user_id, item_id, comments, score) => {
         conn.query(`INSERT INTO Comments(user_id, item_id, comments, score) 
         VALUES(${user_id}, ${item_id},'${comments}',${score})`,
             (err, result) => {
-                if (err) resolve({err: err});
-                else {
-                    resolve({result: 1});
-                }
+                if (err) reject(err);
+                else resolve(true);
             });
     });
 }
@@ -78,8 +71,8 @@ exports.createBuy = (item_id, buyer_id, seller_id) => {
             'INSERT INTO Buys(item_id, buyer_id, seller_id) VALUES(?, ?, ?)',
             [item_id, buyer_id, seller_id],
             (err, result) => {
-                if (err) resolve({err: err});
-                else resolve({result: 1});
+                if (err) reject(err);
+                else resolve(true);
             }
         )
     });
@@ -91,8 +84,8 @@ exports.createHelp = (user_id, ask, seller_id, item_id) => {
             'INSERT INTO Helps(user_id, ask,seller_id, item_id) VALUES(?, ?, ?, ?)',
             [user_id, ask, seller_id, item_id],
             (err, result) => {
-                if (err) resolve({err: err});
-                else resolve({result: 1});
+                if (err) reject(err);
+                else resolve(true);
             }
         )
     });
@@ -112,9 +105,8 @@ exports.checkIsLiked = (user_id, item_id) => {
             "SELECT * FROM Likes WHERE user_id = ? and item_id = ?",
             [user_id, item_id],
             (err, result) => {
-                if (err) resolve({ err: err });
-                console.log(user_id, item_id);
-                if (result.length == 0) resolve(false);
+                if (err) reject(err);
+                else if (result.length === 0) resolve(false);
                 else {
                     resolve(true);
                 }
@@ -126,11 +118,8 @@ exports.checkIsLiked = (user_id, item_id) => {
 exports.getUserByUserId = (id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Users WHERE id = ${id}`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
-            else {
-                resolve(result[0]);
-            }
+            if (err) reject(err);
+            else resolve(result[0])
         });
     });
 }
@@ -138,33 +127,24 @@ exports.getUserByUserId = (id) => {
 exports.getBrandById = (id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Brands WHERE id = ${id}`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
-            else {
-                resolve(result[0]);
-            }
+            if (err) reject(err);
+            else resolve(result[0])
         });
     });
 }
 exports.getTempsByUserId = (user_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Temps WHERE user_id = ${user_id}`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
-            else {
-                resolve(result);
-            }
+            if (err) reject(err);
+            else resolve(result);
         });
     });
 }
 exports.getItemById = (item_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Items WHERE id = ${item_id}`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
-            else {
-                resolve(result[0]);
-            }
+            if (err) reject(err);
+            else resolve(result[0]);
         });
     });
 }
@@ -172,11 +152,8 @@ exports.getItemById = (item_id) => {
 exports.getImageByItemId = (item_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Photos WHERE item_id = ${item_id} and first = 1`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
-            else {
-                resolve(result[0]);
-            }
+            if (err) reject(err);
+            else resolve(result[0]);
         });
     });
 }
@@ -185,11 +162,8 @@ exports.getItemsByUserId = (user_id) => {
     return new Promise((resolve, reject) => {
         // console.log(user_id);
         conn.query(`SELECT * FROM Items WHERE user_id = ${user_id}`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
-            else {
-                resolve(result);
-            }
+            if (err) reject(err);
+            else resolve(result);
         });
     });
 }
@@ -197,11 +171,8 @@ exports.getItemsByUserId = (user_id) => {
 exports.getBuysByBuyerId = (user_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Buys WHERE buyer_id = ${user_id}`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
-            else {
-                resolve(result);
-            }
+            if (err) reject(err);
+            else resolve(result);
         });
     });
 }
@@ -209,11 +180,8 @@ exports.getBuysByBuyerId = (user_id) => {
 exports.getBuysBySellerId = (user_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Buys WHERE seller_id = ${user_id}`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
-            else {
-                resolve(result);
-            }
+            if (err) reject(err);
+            else resolve(result);
         });
     });
 }
@@ -221,11 +189,8 @@ exports.getBuysBySellerId = (user_id) => {
 exports.getHelpsByUserId = (user_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Helps WHERE user_id = ${user_id}`, (err, result) => {
-            console.log(result);
             if (err) reject(err);
-            else {
-                resolve(result);
-            }
+            else resolve(result);
         });
     });
 }
@@ -234,9 +199,7 @@ exports.getHelpById = (id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Helps WHERE id = ${id}`, (err, result) => {
             if (err) reject(err);
-            else {
-                resolve(result[0]);
-            }
+            else resolve(result[0]);
         });
     });
 }
@@ -244,11 +207,8 @@ exports.getHelpById = (id) => {
 exports.getHelpsBySellerId = (seller_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Helps WHERE seller_id= ${seller_id}`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
-            else {
-                resolve(result);
-            }
+            if (err) reject(err);
+            else resolve(result);
         });
     });
 }
@@ -263,10 +223,8 @@ exports.getHelpsBySellerId = (seller_id) => {
 exports.patchItemStatusToZero = (item_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`UPDATE Items SET status=0 WHERE id=${item_id}`, (err, result) => {
-            if (err) resolve({err: err});
-            else {
-                resolve({result: 1});
-            }
+            if (err) reject(err);
+            else resolve(true);
         });
     })
 }
@@ -274,10 +232,8 @@ exports.patchItemStatusToZero = (item_id) => {
 exports.patchHelps = (id, ask, answer) => {
     return new Promise((resolve, reject) => {
         conn.query(`UPDATE Helps SET ask = '${ask}', answer='${answer}' WHERE id=${id}`, (err, result) => {
-            if (err) resolve({err: err});
-            else {
-                resolve({result: 1});
-            }
+            if (err) reject(err);
+            else resolve(true);
         });
     })
 }
@@ -294,10 +250,8 @@ exports.patchHelps = (id, ask, answer) => {
 exports.deleteTempById = (id) => {
     return new Promise((resolve, reject) => {
         conn.query(`DELETE FROM Temps WHERE id = ${id}`, (err, result) => {
-            if (err) resolve({err: err});
-            else {
-                resolve(result);
-            }
+            if (err) reject(err);
+            else resolve(true);
         });
     })
 }
@@ -305,10 +259,8 @@ exports.deleteTempById = (id) => {
 exports.deleteItemById = (id) => {
     return new Promise((resolve, reject) => {
         conn.query(`DELETE FROM Items WHERE id = ${id}`, (err, result) => {
-            if (err) resolve({err: err});
-            else {
-                resolve(result);
-            }
+            if (err) reject(err);
+            else resolve(true);
         });
     })
 }
@@ -316,10 +268,8 @@ exports.deleteItemById = (id) => {
 exports.deleteHelpById = (id) => {
     return new Promise((resolve, reject) => {
         conn.query(`DELETE FROM Helps WHERE id = ${id}`, (err, result) => {
-            if (err) resolve({err: err});
-            else {
-                resolve(result);
-            }
+            if (err) reject(err);
+            else resolve(true);
         });
     })
 }
@@ -329,10 +279,8 @@ exports.deleteLikeByUserId = (user_id, item_id) => {
             "DELETE FROM Likes WHERE user_id = ? and item_id = ?",
             [user_id, item_id],
             (err) => {
-                if (err) resolve({ err: err });
-                else {
-                    resolve(true);
-                }
+                if (err) reject(err);
+                else resolve(true);
             }
         )
     })
