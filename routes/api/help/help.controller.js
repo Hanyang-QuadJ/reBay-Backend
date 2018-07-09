@@ -63,7 +63,9 @@ exports.createHelp = async (req, res) => {
 
 exports.getHelps = async (req, res) => {
 
-    helps = await query.getHelpsByUserId(req.decoded._id);
+    helps = await query.getHelpsByUserId(req.decoded._id)
+        .catch(err=>{return res.status(400).json(err)})
+
     for(help of helps){
         item = await query.getItemById(help.item_id);
         help.item = item;
@@ -83,16 +85,11 @@ exports.getHelps = async (req, res) => {
 
 exports.getHelpById = async (req, res) => {
     const {id} = req.params;
-    help = await query.getHelpById(id);
-    err = query.errorCheck(help);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
-        })
+    try{
+        help = await query.getHelpById(id)
+        return res.status(200).json({help})
     }
-    return res.status(200).json({
-        help
-    })
+    catch(err){return res.status(400).json(err)}
 }
 
 exports.modifyHelp = async (req, res) => {

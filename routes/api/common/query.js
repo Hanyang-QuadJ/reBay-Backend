@@ -205,8 +205,8 @@ exports.getBuysBySellerId = (user_id) => {
 exports.getHelpsByUserId = (user_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Helps WHERE user_id = ${user_id}`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
+            console.log(result);
+            if (err) reject(err);
             else {
                 resolve(result);
             }
@@ -217,8 +217,7 @@ exports.getHelpsByUserId = (user_id) => {
 exports.getHelpById = (id) => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM Helps WHERE id = ${id}`, (err, result) => {
-            if (err) resolve({err: err});
-            if (result.length === 0) resolve([]);
+            if (err) reject(err);
             else {
                 resolve(result[0]);
             }
