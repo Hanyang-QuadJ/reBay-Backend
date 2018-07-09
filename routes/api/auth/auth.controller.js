@@ -47,12 +47,12 @@ exports.register = (req, res) => {
 
 exports.login = (req, res) => {
 	const { email, password } = req.body;
-	console.log(email,password,config.secret);
+	// console.log(email,password,config.secret);
 	const secret = req.app.get('jwt-secret');
 	const encrypted = crypto.createHmac('sha1', config.secret)
 		.update(password)
 		.digest('base64');
-	console.log(encrypted);
+	// console.log(encrypted);
 	conn.query(
 		'SELECT * from Users WHERE email=? and password=?',
 		[email, encrypted],

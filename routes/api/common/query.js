@@ -106,6 +106,22 @@ exports.createHelp = (user_id, ask, seller_id, item_id) => {
 //-----------------------------------------------get-----------------------------------------------
 //-----------------------------------------------get-----------------------------------------------
 //-----------------------------------------------get-----------------------------------------------
+exports.checkIsLiked = (user_id, item_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(
+            "SELECT * FROM Likes WHERE user_id = ? and item_id = ?",
+            [user_id, item_id],
+            (err, result) => {
+                if (err) resolve({ err: err });
+                console.log(user_id, item_id);
+                if (result.length == 0) resolve(false);
+                else {
+                    resolve(true);
+                }
+            }
+        )
+    })
+}
 
 exports.getUserByUserId = (id) => {
     return new Promise((resolve, reject) => {
@@ -265,6 +281,8 @@ exports.patchHelps = (id, ask, answer) => {
         });
     })
 }
+
+
 //-----------------------------------------------delete-----------------------------------------------
 //-----------------------------------------------delete-----------------------------------------------
 //-----------------------------------------------delete-----------------------------------------------
@@ -303,5 +321,19 @@ exports.deleteHelpById = (id) => {
                 resolve(result);
             }
         });
+    })
+}
+exports.deleteLikeByUserId = (user_id, item_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(
+            "DELETE FROM Likes WHERE user_id = ? and item_id = ?",
+            [user_id, item_id],
+            (err) => {
+                if (err) resolve({ err: err });
+                else {
+                    resolve(true);
+                }
+            }
+        )
     })
 }

@@ -261,3 +261,48 @@ exports.itemLike = (req, res) => {
         }
     )
 }
+
+exports.itemLikeCancel = async(req, res) => {
+    const { item_id } = req.params;
+    // const { user_id } = req.decoded._id;
+    const isLiked = await query.checkIsLiked(req.decoded._id, item_id);
+    err = await query.errorCheck(isLiked);
+    if (err) {
+        return res.status(400).json({
+            message: "fail"
+        })
+    }
+    if (isLiked) { // 좋아요가 되어있음
+        const isDeleted = await query.deleteLikeByUserId(req.decoded._id, item_id);
+        err = await query.errorCheck(isDeleted);
+        if (err) {
+            return res.status(400).json({
+                message: "fail"
+            })
+        } else {
+            return res.status(200).json({
+                message: 'Successfully Canceled'
+            })
+        }
+    } else { // 좋아요가 되어있지 않음
+        return res.status(200).json({
+            isLiked: false
+        })
+    }
+}
+
+exports.itemLikeCheck = async(req, res) => {
+    const { item_id } = req.params;
+    // const { user_id } = req.decoded._id;
+    const isLiked = await query.checkIsLiked(req.decoded._id, item_id);
+    err = await query.errorCheck(isLiked);
+    if (err) {
+        return res.status(400).json({
+            message: "fail"
+        })
+    }
+    // await console.log(isLiked);
+    return res.status(200).json({
+        isLiked: isLiked
+    })
+}
