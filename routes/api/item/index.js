@@ -2,7 +2,10 @@ const router = require('express').Router();
 const controller = require('./item.controller');
 
 router.post('/sell', controller.sell);
+
 router.post('/like/:item_id', controller.itemLike);
+router.delete('/like/:item_id', controller.itemLikeCancel);
+router.get('/like/:item_id', controller.itemLikeCheck);
 
 router.get('/all', controller.getSellList);
 
