@@ -66,7 +66,7 @@ exports.createComment = (user_id, item_id, comments, score) => {
 }
 
 exports.createBuy = (item_id, buyer_id, seller_id) => {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         conn.query(
             'INSERT INTO Buys(item_id, buyer_id, seller_id) VALUES(?, ?, ?)',
             [item_id, buyer_id, seller_id],
@@ -79,7 +79,7 @@ exports.createBuy = (item_id, buyer_id, seller_id) => {
 }
 
 exports.createHelp = (user_id, ask, seller_id, item_id) => {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         conn.query(
             'INSERT INTO Helps(user_id, ask,seller_id, item_id) VALUES(?, ?, ?, ?)',
             [user_id, ask, seller_id, item_id],
@@ -91,6 +91,18 @@ exports.createHelp = (user_id, ask, seller_id, item_id) => {
     });
 }
 
+exports.createLike = (item_id, user_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(
+            'INSERT INTO Likes(item_id, user_id) VALUES(?, ?)',
+            [item_id, user_id],
+            (err, result) => {
+                if (err) reject(err);
+                else resolve(true);
+            }
+        )
+    });
+}
 //-----------------------------------------------get-----------------------------------------------
 //-----------------------------------------------get-----------------------------------------------
 //-----------------------------------------------get-----------------------------------------------
@@ -247,7 +259,14 @@ exports.patchHelps = (id, ask, answer) => {
     })
 }
 
-
+exports.patchItem = (id, status, like_cnt) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`UPDATE Items SET status = ${status}, like_cnt=${like_cnt} WHERE id=${id}`, (err, result) => {
+            if (err) reject(err);
+            else resolve(true);
+        });
+    })
+}
 //-----------------------------------------------delete-----------------------------------------------
 //-----------------------------------------------delete-----------------------------------------------
 //-----------------------------------------------delete-----------------------------------------------
