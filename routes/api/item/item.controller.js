@@ -290,7 +290,7 @@ exports.getAskItems = async(req, res) => {
         const askItems = [];
         for(help of helps){
             item = await query.getItemById(help.item_id);
-            if(askItems.indexOf(item)<0) askItems.push(item);
+            if(askItems.map(x=>x.id).indexOf(item.id)<0) askItems.push(item);
         }
         for(item of askItems){
             item.image = await query.getImageByItemId(item.id);
