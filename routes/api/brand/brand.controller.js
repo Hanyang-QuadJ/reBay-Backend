@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const config = require('../../../config');
 const conn = mysql.createConnection(config);
+const query = require('../common/query');
 const lineReader = require('line-reader');
 
 // exports.brand = (req, res) => {
