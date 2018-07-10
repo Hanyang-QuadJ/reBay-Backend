@@ -212,6 +212,15 @@ exports.getHelpsBySellerId = (seller_id) => {
         });
     });
 }
+
+exports.getHelpsByItemId = (item_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Helps WHERE item_id= ${item_id}`, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
+}
 //-----------------------------------------------UPDATE-----------------------------------------------
 //-----------------------------------------------UPDATE-----------------------------------------------
 //-----------------------------------------------UPDATE-----------------------------------------------

@@ -258,3 +258,46 @@ exports.itemLikeCheck = async(req, res) => {
         return res.status(400).json(err);
     }
 }
+
+exports.getAskedItems = async(req, res) => {
+    const user_id = req.decoded._id;
+    try{
+        const items = await query.getItemsByUserId(user_id);
+        const helps = await query.getHelpsBySellerId(user_id);
+        const askedItems = [];
+        for(item of items){
+            for(help of helps){
+                if(item.id === help.item_id){
+                    askedItems.push(item);
+                    break;
+                }
+            }
+        }
+        for(item of askedItems){
+            item.image = await query.getImageByItemId(item.id);
+        }
+        return res.status(200).json(askedItems);
+    }
+    catch(err) {
+        return res.status(400).json(err);
+    }
+}
+
+exports.getAskItems = async(req, res) => {
+    const user_id = req.decoded._id;
+    try{
+        const helps = await query.getHelpsByUserId(user_id);
+        const askItems = [];
+        for(help of helps){
+            item = await query.getItemById(help.item_id);
+            if(askItems.indexOf(item)<0) askItems.push(item);
+        }
+        for(item of askItems){
+            item.image = await query.getImageByItemId(item.id);
+        }
+        return res.status(200).json(askItems);
+    }
+    catch(err) {
+        return res.status(400).json(err);
+    }
+}

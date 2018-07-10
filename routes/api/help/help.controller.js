@@ -93,3 +93,18 @@ exports.getHelpsBySellerId = async (req, res) => {
         return res.status(400).json(err);
     }
 }
+
+exports.getHelpsByItemId  = async (req, res) => {
+    const {item_id} = req.params;
+    try{
+        const helps = await query.getHelpsByItemId(item_id);
+        for(help of helps){
+            help.user = await query.getUserByUserId(help.user_id);
+            help.seller = await query.getUserByUserId(help.seller_id);
+        }
+        return res.status(200).json(helps);
+    }
+    catch(err){
+        return res.status(400).json(err);
+    }
+}

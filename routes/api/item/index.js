@@ -16,5 +16,7 @@ router.post('/temp/:item_id', controller.createTemp);
 router.get('/temp', controller.getTemp);
 router.delete('/temp/:temp_id', controller.deleteTemp);
 
+router.get('/asked',controller.getAskedItems);
+router.get('/ask',controller.getAskItems);
 module.exports = router;
 
