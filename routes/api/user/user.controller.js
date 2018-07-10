@@ -9,7 +9,7 @@ exports.me = (req, res) => {
         'SELECT * FROM Users WHERE id=?',
         [req.decoded._id],
         (err, result) => {
-            if (err) throw err;
+            if (err) return res.status(400).json(err);
             return res.status(200).json({
                 result
             })
@@ -19,70 +19,31 @@ exports.me = (req, res) => {
 
 
 exports.buyedlist = async (req, res) => {
-    const buys = await query.getBuysByBuyerId(req.decoded._id);
-    err = query.errorCheck(buys);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
+    try {
+        await query.getBuysByBuyerId(req.decoded._id);
+        for (buy of buys) {
+            buy.item = await query.getItemById(buy.item_id);
+            buy.item.image = await query.getImageByItemId(buy.item_id);
+        }
+        return res.status(200).json({
+            buys
         })
+    } catch (err) {
+        return res.status(400).json(err);
     }
-    for (buy of buys) {
-        buy.item = await query.getItemById(buy.item_id);
-        err = query.errorCheck(buy.item);
-        if (err) {
-            return res.status(400).json({
-                message: "fail"
-            })
-        }
-        buy.item.image = await query.getImageByItemId(buy.item_id);
-        err = query.errorCheck(buy.item.image);
-        if (err) {
-            return res.status(400).json({
-                message: "fail"
-            })
-        }
-    }
-    return res.status(200).json({
-        buys
-    })
 }
 
 exports.soldlist = async (req, res) => {
-    const buys = await query.getBuysBySellerId(req.decoded._id);
-    err = query.errorCheck(buys);
-    if (err) {
-        return res.status(400).json({
-            message: "fail"
+    try {
+        await query.getBuysBySellerId(req.decoded._id);
+        for (buy of buys) {
+            buy.item = await query.getItemById(buy.item_id);
+            buy.item.image = await query.getImageByItemId(buy.item_id);
+        }
+        return res.status(200).json({
+            buys
         })
+    } catch (err) {
+        return res.status(400).json(err);
     }
-    for (buy of buys) {
-        buy.item = await query.getItemById(buy.item_id);
-        err = query.errorCheck(buy.item);
-        if (err) {
-            return res.status(400).json({
-                message: "fail"
-            })
-        }
-        buy.item.image = await query.getImageByItemId(buy.item_id);
-        err = query.errorCheck(buy.item.image);
-        if (err) {
-            return res.status(400).json({
-                message: "fail"
-            })
-        }
-    }
-    return res.status(200).json({
-        buys
-    })
 }
-//========================================================================
-//========================================================================
-//========================================================================
-//========================================================================
-//========================================================================
-//========================================================================
-//========================================================================
-//========================================================================
-//========================================================================
-
-
