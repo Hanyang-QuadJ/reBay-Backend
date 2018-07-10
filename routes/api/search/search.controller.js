@@ -80,7 +80,7 @@ exports.search = (req, res) => {
 
 exports.searchByName = (req, res) => {
     conn.query(
-        `SELECT * FROM Items WHERE item_name LIKE '%${req.query.name}%' LIMIT 20 OFFSET ${req.query.index}`,
+        `SELECT * FROM Items WHERE item_name LIKE '%${req.query.name}%'`,
         async (err, result) => {
             if (err) return res.status(406).json({ err });
             for (let i = 0; i < result.length; i++) {
@@ -88,7 +88,6 @@ exports.searchByName = (req, res) => {
                 result[i].images = await getImages(result[i].id);
             }
             await res.status(200).json({
-                nextIndex: parseInt(req.query.index) + parseInt(result.length),
                 result
             })
         }
@@ -131,7 +130,7 @@ exports.searchByCategory = (req, res) => {
 
 exports.serachByBrandName = (req, res) => {
     conn.query(
-        `SELECT Items.id as id, item_name, price, size, season, content, sub_content, category_1, category_2, item_status, fullbox, warantee, domestic, refund, time, Brands.id as brand_id,  brand_name, brand_name_kor FROM Items JOIN Brands WHERE Items.brand_id = Brands.id and (brand_name LIKE '%${req.query.name}%' or brand_name_kor LIKE '%${req.query.name}%') LIMIT 20 OFFSET ${req.query.index}`,
+        `SELECT Items.id as id, item_name, price, size, season, content, sub_content, category_1, category_2, item_status, fullbox, warantee, domestic, refund, time, Brands.id as brand_id,  brand_name, brand_name_kor FROM Items JOIN Brands WHERE Items.brand_id = Brands.id and (brand_name LIKE '%${req.query.name}%' or brand_name_kor LIKE '%${req.query.name}%')`,
         async (err, result) => {
             if (err) return res.status(406).json({ err });
             for (let i = 0; i < result.length; i++) {
@@ -139,7 +138,6 @@ exports.serachByBrandName = (req, res) => {
                 result[i].images = await getImages(result[i].id);
             }
             await res.status(200).json({
-                nextIndex: parseInt(req.query.index) + parseInt(result.length),
                 result
             })
         }
@@ -148,7 +146,7 @@ exports.serachByBrandName = (req, res) => {
 
 exports.searchByTagName = (req, res) => {
     conn.query(
-        `SELECT Items.id, Tags.title as tag_title, Items.user_id, Items.item_name, brand_id, price, size, season, content, sub_content, category_1, category_2, item_status, fullbox, warantee, domestic, refund, time, status FROM Tags JOIN Items ON Tags.item_id = Items.id WHERE Tags.title = '${req.query.name}' LIMIT 20 OFFSET ${req.query.index}`,
+        `SELECT Items.id, Tags.title as tag_title, Items.user_id, Items.item_name, brand_id, price, size, season, content, sub_content, category_1, category_2, item_status, fullbox, warantee, domestic, refund, time, status FROM Tags JOIN Items ON Tags.item_id = Items.id WHERE Tags.title = '${req.query.name}'`,
         async (err, result) => {
             if (err) return res.status(406).json({ err });
             for (let i = 0; i < result.length; i++) {
@@ -156,7 +154,6 @@ exports.searchByTagName = (req, res) => {
                 result[i].images = await getImages(result[i].id);
             }
             await res.status(200).json({
-                nextIndex: parseInt(req.query.index) + parseInt(result.length),
                 result
             })
         }
