@@ -96,12 +96,12 @@ exports.searchByName = (req, res) => {
 
 exports.searchByCategory = (req, res) => {
     conn.query(
-        `SELECT * FROM Items WHERE category_1 LIKE '%${req.query.category}%' LIMIT 20 OFFSET ${req.query.index}`,
+        `SELECT * FROM Items WHERE category_1 LIKE '%${req.query.category}%'`,
         async (err, result) => {
             if (err) return res.status(406).json({ err });
             if (result.length == 0) {
                 conn.query(
-                    `SELECT * FROM Items WHERE category_2 LIKE '%${req.query.category}%' LIMIT 20 OFFSET ${req.query.index}`,
+                    `SELECT * FROM Items WHERE category_2 LIKE '%${req.query.category}%'`,
                     async (err, result) => {
                         if (err) return res.status(406).json({ err });
                         for (let i = 0; i < result.length; i++) {
@@ -109,7 +109,6 @@ exports.searchByCategory = (req, res) => {
                             result[i].images = await getImages(result[i].id);
                         }
                         await res.status(200).json({
-                            nextIndex: parseInt(req.query.index) + parseInt(result.length),
                             result
                         })
                     }
@@ -120,7 +119,6 @@ exports.searchByCategory = (req, res) => {
                     result[i].images = await getImages(result[i].id);
                 }
                 await res.status(200).json({
-                    nextIndex: parseInt(req.query.index) + parseInt(result.length),
                     result
                 })
             }
