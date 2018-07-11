@@ -79,10 +79,12 @@ exports.createBuy = (item_id, buyer_id, seller_id) => {
 }
 
 exports.createHelp = (user_id, ask, seller_id, item_id) => {
+    const d = new Date();
+    d.setUTCHours(d.getUTCHours());
     return new Promise((resolve, reject) => {
         conn.query(
-            'INSERT INTO Helps(user_id, ask,seller_id, item_id) VALUES(?, ?, ?, ?)',
-            [user_id, ask, seller_id, item_id],
+            'INSERT INTO Helps(user_id, ask,seller_id, item_id, time) VALUES(?, ?, ?, ?, ?)',
+            [user_id, ask, seller_id, item_id, d],
             (err, result) => {
                 if (err) reject(err);
                 else resolve(true);

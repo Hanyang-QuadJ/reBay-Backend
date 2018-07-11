@@ -6,6 +6,7 @@ router.delete('/:id', controller.deleteHelp);
 router.patch('', controller.modifyHelp);
 router.get('', controller.getHelps);
 router.get('/sell/:id', controller.getHelpsBySellerId);
+router.get('/item/me/:item_id', controller.getHelpsByItemIdOfMe);
 router.get('/item/:item_id', controller.getHelpsByItemId);
 router.get('/:id', controller.getHelpById);
 
