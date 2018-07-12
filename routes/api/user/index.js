@@ -6,5 +6,6 @@ router.get('/buylist',controller.buyedlist);
 router.get('/selllist',controller.soldlist);
 
 router.post('/profile', controller.profileImageUpload);
+router.patch('/profile', controller.profileImageUpdate);
 
 module.exports = router;
