@@ -35,6 +35,34 @@ exports.sendMessage = (token, body) => {
     })
 }
 
+exports.uploadProfileImage = (base64, user_id) => {
+    return new Promise((resolve, reject) => {
+        const picKey = d.getFullYear() + '_'
+            + d.getMonth() + '_'
+            + d.getDate() + '_'
+            + crypto.randomBytes(20).toString('hex') +
+            +req.decoded._id + '.jpg';
+        const picUrl = `https://s3.ap-northeast-2.amazonaws.com/rebay-image/${picKey}`;
+        let buf = new Buffer(pic.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+        s3.putObject({
+            Bucket: 'rebay-image',
+            Key: picKey,
+            Body: buf,
+            ACL: 'public-read'
+        }, function (err) {
+            if (err) {
+                if (err) reject(err);
+            } else {
+                // console.log(response)
+                conn.query('UPDATE Users SET profile_img = ? WHERE id = ?', [picUrl, result.insertId], (err) => {
+                    if (err) reject(err);
+                    else resolve(true);
+                })
+            }
+        }); 
+    });
+}
+
 //-----------------------------------------------create-----------------------------------------------
 //-----------------------------------------------create-----------------------------------------------
 //-----------------------------------------------create-----------------------------------------------
