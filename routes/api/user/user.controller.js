@@ -48,7 +48,16 @@ exports.soldlist = async (req, res) => {
     }
 }
 
-exports.profileImageUpload = async(req, res) => {
+exports.profileImageUpload = async (req, res) => {
+    const { base64 } = req.body;
+    try {
+        await query.uploadProfileImage(base64, req.decoded._id);
+    } catch (err) {
+        return res.status(400).json(err);
+    }
+}
+
+exports.profileImageUpdate = async (req, res) => {
     const { base64 } = req.body;
     try {
         await query.uploadProfileImage(base64, req.decoded._id);
