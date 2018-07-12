@@ -3,7 +3,7 @@ const controller = require('./help.controller');
 
 router.post('', controller.createHelp);
 router.delete('/:id', controller.deleteHelp);
-router.patch('', controller.modifyHelp);
+router.patch('/answer', controller.patchAnswerToHelpByHelpId);
 router.get('', controller.getHelps);
 router.get('/sell/:id', controller.getHelpsBySellerId);
 router.get('/item/me/:item_id', controller.getHelpsByItemIdOfMe);
