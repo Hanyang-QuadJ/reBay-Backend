@@ -143,7 +143,7 @@ exports.writeComments = async (req, res) => {
 }
 
 exports.createTemp = async (req, res) => {
-    const item_id = req.params;
+    const {item_id} = req.params;
     try {
         result = await query.createTemp(item_id, req.decoded._id);
         return res.status(200).json({
