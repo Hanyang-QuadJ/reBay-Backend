@@ -126,6 +126,7 @@ exports.patchAnswerToHelpByHelpId = async (req, res) => {
         await query.patchHelps(help_id, help.ask, answer);
         user = await query.getUserByUserId(help.user_id);
         seller = await query.getUserByUserId(help.seller_id);
+        item = await query.getItemById(help.item_id);
         message = seller.username + " 님이 판매물건 " + item.item_name + " 에 대한 문의에 답변했습니다.";
         sendMessageResult = await query.sendMessage(user.fcm_token, message);
         return res.status(200).json({message: "success"});
