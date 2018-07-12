@@ -284,7 +284,9 @@ exports.patchHelps = (id, ask, answer) => {
     const d = new Date();
     d.setUTCHours(d.getUTCHours());
     return new Promise((resolve, reject) => {
-        conn.query(`UPDATE Helps SET ask = '${ask}', answer='${answer}', time_ans='${d}' WHERE id=${id}`, (err, result) => {
+        conn.query('UPDATE Helps SET ask = ?, answer=?, time_ans=? WHERE id=?',
+            [ask, answer, d, id],
+            (err, result) => {
             if (err) reject(err);
             else resolve(true);
         });
