@@ -12,6 +12,21 @@ const json = (obj) => {
     return JSON.parse(JSON.stringify(obj));
 }
 
+exports.renewFcmtoken = (user_id, fcm_token) => {
+    return new Promise((resolve, reject) => {
+        conn.query(
+            "UPDATE Users SET fcm_token = ? WHERE id = ?",
+            [fcm_token, user_id],
+            (err) => {
+                if (err) reject(err);
+                else {
+                    resolve(true);
+                }
+            }
+        )
+    })
+}
+
 exports.sendMessage = (token, body) => {
     const message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
         to: token,

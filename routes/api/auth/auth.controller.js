@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const mysql = require('mysql');
 const config = require('../../../config');
 const conn = mysql.createConnection(config);
+const query = require('../common/query');
 
 exports.register = (req, res) => {
 	const secret = req.app.get('jwt-secret');
@@ -46,7 +47,7 @@ exports.register = (req, res) => {
 };
 
 exports.login = (req, res) => {
-	const { email, password } = req.body;
+	const { email, password, fcm_token } = req.body;
 	// console.log(email,password,config.secret);
 	const secret = req.app.get('jwt-secret');
 	const encrypted = crypto.createHmac('sha1', config.secret)
@@ -71,8 +72,9 @@ exports.login = (req, res) => {
 						expiresIn: '7d',
 						issuer: 'rebay_admin',
 						subject: 'userInfo'
-					}, (err, token) => {
+					}, async(err, token) => {
 						if (err) return res.status(406).json({ message:'login failed' });
+						await query.renewFcmtoken(result[0].id, fcm_token);
 						return res.status(200).json({
 							message: 'logged in successfully',
 							token
