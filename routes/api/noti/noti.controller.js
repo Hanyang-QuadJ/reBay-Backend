@@ -32,7 +32,21 @@ exports.getNotificationsByUserId = async(req, res) => {
         return res.status(400).json(err);
     }
 }
-
+exports.getCountOfNotificationsByUserId = async(req, res) => {
+    const user_id = req.decoded._id;
+    try {
+        const notifications = await query.getNotificationsByUserId(user_id);
+        const newNotifications = [];
+        for(notification of notifications){
+            if(notification.viewed === 0){
+                newNotifications.push(notification);
+            }
+        }
+        return res.status(200).json({count:newNotifications.length});
+    } catch (err) {
+        return res.status(400).json(err);
+    }
+}
 exports.patchNotificationToViewed = async(req, res) => {
     const {id} = req.params;
     try {
