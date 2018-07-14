@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const controller = require('./noti.controller');
 
-// router.get('/one/:item_id', controller.getOneItem);
-// router.post('/noti')
+router.post('', controller.createNotification);
+router.get('', controller.getNotificationsByUserId);
+router.patch('/:id', controller.patchNotificationToViewed);
 
 module.exports = router;

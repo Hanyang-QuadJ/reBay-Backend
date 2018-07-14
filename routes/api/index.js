@@ -27,8 +27,8 @@ router.use('/help', help);
 router.use('/item', authMiddleware);
 router.use('/item', item);
 
-router.use('/noti', authMiddleware);
-router.use('/noti', noti);
+router.use('/notify', authMiddleware);
+router.use('/notify', noti);
 
 router.use('/search', search);
 

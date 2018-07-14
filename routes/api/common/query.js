@@ -97,6 +97,23 @@ exports.createTemp = (item_id, user_id) => {
     });
 }
 
+exports.createNotification = (type, user_id,item_id, message) => {
+    return new Promise((resolve, reject) => {
+        conn.query('INSERT INTO Notifications(type,user_id,item_id,message) VALUES(?,?,?,?)',
+            [type, user_id, item_id, message],
+            (err, result) =>  {
+            if (err) {
+                reject(err);
+                console.log("@@@@@@@@@@@@");
+            }
+            else {
+                console.log("@@@@@@@@@@@")
+                resolve(true);
+            }
+        });
+    });
+}
+
 exports.createComment = (user_id, item_id, comments, score) => {
     return new Promise((resolve, reject) => {
         conn.query(`INSERT INTO Comments(user_id, item_id, comments, score) 
@@ -278,6 +295,24 @@ exports.getHelpsByItemId = (item_id) => {
         });
     });
 }
+
+exports.getHelpsByItemId = (item_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Helps WHERE item_id= ${item_id}`, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
+}
+
+exports.getNotificationsByUserId = (user_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Notifications WHERE user_id= ${user_id}`, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
+}
 //-----------------------------------------------UPDATE-----------------------------------------------
 //-----------------------------------------------UPDATE-----------------------------------------------
 //-----------------------------------------------UPDATE-----------------------------------------------
@@ -289,6 +324,15 @@ exports.getHelpsByItemId = (item_id) => {
 exports.patchItemStatusToZero = (item_id) => {
     return new Promise((resolve, reject) => {
         conn.query(`UPDATE Items SET status=0 WHERE id=${item_id}`, (err, result) => {
+            if (err) reject(err);
+            else resolve(true);
+        });
+    })
+}
+
+exports.patchNotificationById = (id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`UPDATE Notifications SET viewed=1 WHERE id=${id}`, (err, result) => {
             if (err) reject(err);
             else resolve(true);
         });

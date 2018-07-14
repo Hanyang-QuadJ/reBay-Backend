@@ -145,6 +145,12 @@ exports.writeComments = async (req, res) => {
 exports.createTemp = async (req, res) => {
     const {item_id} = req.params;
     try {
+        temps = await query.getTempsByUserId(req.decoded._id);
+        for(temp of temps){
+            if(temp.item_id == item_id){
+                return res.status(400).json({message:"already in temp"});
+            }
+        }
         result = await query.createTemp(item_id, req.decoded._id);
         return res.status(200).json({
             message: "success"

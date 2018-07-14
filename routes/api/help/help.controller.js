@@ -17,6 +17,7 @@ exports.createHelp = async (req, res) => {
         result = await query.createHelp(req.decoded._id, ask, seller_id, item_id);
         message = buyer.username + " 님이 판매물건 " + item.item_name + " 에 대해 문의했습니다.";
         sendMessageResult = await query.sendMessage(seller.fcm_token, message);
+        await query.createNotification(1,seller.id,item.id,message);
         return res.status(200).json({
             message: "success"
         });
@@ -129,6 +130,7 @@ exports.patchAnswerToHelpByHelpId = async (req, res) => {
         item = await query.getItemById(help.item_id);
         message = seller.username + " 님이 판매물건 " + item.item_name + " 에 대한 문의에 답변했습니다.";
         sendMessageResult = await query.sendMessage(user.fcm_token, message);
+        await query.createNotification(2,user.id,item.id,message);
         return res.status(200).json({message: "success"});
     }
     catch (err) {
