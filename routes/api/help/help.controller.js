@@ -48,6 +48,8 @@ exports.getHelpById = async (req, res) => {
     const {id} = req.params;
     try {
         help = await query.getHelpById(id)
+        help.user = await query.getUserByUserId(help.user_id);
+        help.seller = await query.getUserByUserId(help.seller_id);
         return res.status(200).json({help})
     }
     catch (err) {
