@@ -74,7 +74,7 @@ exports.uploadProfileImage = (base64, user_id) => {
                     else resolve(true);
                 })
             }
-        }); 
+        });
     });
 }
 
@@ -88,7 +88,7 @@ exports.uploadProfileImage = (base64, user_id) => {
 //-----------------------------------------------create--------------------------------------------------
 exports.createTemp = (item_id, user_id) => {
     return new Promise((resolve, reject) => {
-        conn.query(`INSERT INTO Temps(item_id, user_id) VALUES(${item_id}, ${user_id})`, (err, result) =>  {
+        conn.query(`INSERT INTO Temps(item_id, user_id) VALUES(${item_id}, ${user_id})`, (err, result) => {
             if (err) reject(err);
             else {
                 resolve(true);
@@ -97,20 +97,21 @@ exports.createTemp = (item_id, user_id) => {
     });
 }
 
-exports.createNotification = (type, user_id,item_id, message) => {
+exports.createNotification = (type, user_id, item_id, help_id, message) => {
+    console.log("!!!");
     return new Promise((resolve, reject) => {
-        conn.query('INSERT INTO Notifications(type,user_id,item_id,message) VALUES(?,?,?,?)',
-            [type, user_id, item_id, message],
-            (err, result) =>  {
-            if (err) {
-                reject(err);
-                console.log("@@@@@@@@@@@@");
-            }
-            else {
-                console.log("@@@@@@@@@@@")
-                resolve(true);
-            }
-        });
+        conn.query('INSERT INTO Notifications(type,user_id,item_id,help_id,message) VALUES(?,?,?,?,?)',
+            [type, user_id, item_id, help_id, message],
+            (err, result) => {
+                if (err) {
+                    reject(err);
+                    console.log("@@@@@@@@@@@@");
+                }
+                else {
+                    console.log("@@@@@@@@@@@");
+                    resolve(result);
+                }
+            });
     });
 }
 
@@ -147,7 +148,7 @@ exports.createHelp = (user_id, ask, seller_id, item_id) => {
             [user_id, ask, seller_id, item_id, d],
             (err, result) => {
                 if (err) reject(err);
-                else resolve(true);
+                else resolve(result);
             }
         )
     });
@@ -346,15 +347,29 @@ exports.patchHelps = (id, ask, answer) => {
         conn.query('UPDATE Helps SET ask = ?, answer=?, time_ans=? WHERE id=?',
             [ask, answer, d, id],
             (err, result) => {
-            if (err) reject(err);
-            else resolve(true);
-        });
+                if (err) reject(err);
+                else resolve(true);
+            });
     })
 }
 
 exports.patchItem = (id, status, like_cnt) => {
     return new Promise((resolve, reject) => {
         conn.query(`UPDATE Items SET status = ${status}, like_cnt=${like_cnt} WHERE id=${id}`, (err, result) => {
+            if (err) reject(err);
+            else resolve(true);
+        });
+    })
+}
+
+exports.patchItemByItemObj = (item) => {
+    let {
+        id, item_name, brand_id, price, size, season,
+        content, category_1, category_2, item_status, fullbox,
+        warantee, domestic, refund
+    } = item;
+    return new Promise((resolve, reject) => {
+        conn.query(`UPDATE Items SET item_name = '${item_name}', brand_id=${brand_id}, price = ${price}, size = '${size}', season = '${season}', content = '${content}', category_1 = '${category_1}', category_2 = '${category_2}',item_status = '${item_status}', fullbox = ${fullbox}, warantee = ${warantee}, domestic = ${domestic}, refund = ${refund} WHERE id=${id}`, (err, result) => {
             if (err) reject(err);
             else resolve(true);
         });

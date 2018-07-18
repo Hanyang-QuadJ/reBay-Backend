@@ -139,16 +139,16 @@ exports.writeComments = async (req, res) => {
         })
     } catch (err) {
         return res.status(400).json(err);
-    } 
+    }
 }
 
 exports.createTemp = async (req, res) => {
     const {item_id} = req.params;
     try {
         temps = await query.getTempsByUserId(req.decoded._id);
-        for(temp of temps){
-            if(temp.item_id == item_id){
-                return res.status(400).json({message:"already in temp"});
+        for (temp of temps) {
+            if (temp.item_id == item_id) {
+                return res.status(400).json({message: "already in temp"});
             }
         }
         result = await query.createTemp(item_id, req.decoded._id);
@@ -202,26 +202,26 @@ exports.getSellList = async (req, res) => {
         })
     } catch (err) {
         return res.status(400).json(err);
-    }   
+    }
 }
 
 exports.itemLike = async (req, res) => {
-    const { item_id } = req.params;
-    try{
+    const {item_id} = req.params;
+    try {
         item = await query.getItemById(item_id);
-        await query.createLike(item_id,req.decoded._id);
-        await query.patchItem(item_id,item.status,item.like_cnt+1);
+        await query.createLike(item_id, req.decoded._id);
+        await query.patchItem(item_id, item.status, item.like_cnt + 1);
         return res.status(200).json({
-            message:"success"
+            message: "success"
         })
     }
-    catch(err){
+    catch (err) {
         return res.status(400).json(err);
     }
 }
 
-exports.itemLikeCancel = async(req, res) => {
-    const { item_id } = req.params;
+exports.itemLikeCancel = async (req, res) => {
+    const {item_id} = req.params;
     try {
         const isLiked = await query.checkIsLiked(req.decoded._id, item_id);
         if (isLiked) { // 좋아요가 되어있음
@@ -237,11 +237,11 @@ exports.itemLikeCancel = async(req, res) => {
     } catch (err) {
         return res.status(400).json(err);
     }
-    
+
 }
 
-exports.itemLikeCheck = async(req, res) => {
-    const { item_id } = req.params;
+exports.itemLikeCheck = async (req, res) => {
+    const {item_id} = req.params;
     try {
         const isLiked = await query.checkIsLiked(req.decoded._id, item_id);
         return res.status(200).json({
@@ -252,45 +252,78 @@ exports.itemLikeCheck = async(req, res) => {
     }
 }
 
-exports.getAskedItems = async(req, res) => {
+exports.getAskedItems = async (req, res) => {
     const user_id = req.decoded._id;
-    try{
+    try {
         const items = await query.getItemsByUserId(user_id);
         const helps = await query.getHelpsBySellerId(user_id);
         const askedItems = [];
-        for(item of items){
-            for(help of helps){
-                if(item.id === help.item_id){
+        for (item of items) {
+            for (help of helps) {
+                if (item.id === help.item_id) {
                     askedItems.push(item);
                     break;
                 }
             }
         }
-        for(item of askedItems){
+        for (item of askedItems) {
             item.image = await query.getImageByItemId(item.id);
         }
         return res.status(200).json(askedItems);
     }
-    catch(err) {
+    catch (err) {
         return res.status(400).json(err);
     }
 }
 
-exports.getAskItems = async(req, res) => {
+exports.getAskItems = async (req, res) => {
     const user_id = req.decoded._id;
-    try{
+    try {
         const helps = await query.getHelpsByUserId(user_id);
         const askItems = [];
-        for(help of helps){
+        for (help of helps) {
             item = await query.getItemById(help.item_id);
-            if(askItems.map(x=>x.id).indexOf(item.id)<0) askItems.push(item);
+            if (askItems.map(x => x.id).indexOf(item.id) < 0) askItems.push(item);
         }
-        for(item of askItems){
+        for (item of askItems) {
             item.image = await query.getImageByItemId(item.id);
         }
         return res.status(200).json(askItems);
     }
-    catch(err) {
+    catch (err) {
         return res.status(400).json(err);
     }
+}
+
+exports.patchItemById = async (req, res) => {
+    try{
+        const {item_id} = req.params;
+        item = await query.getItemById(item_id);
+        // let {item_name, brand_id, price, size, season,
+        //     content, category_1, category_2, item_status, fullbox,
+        //     warantee, domestic, refund} = item;
+        // console.log(item_name);
+        // console.log(brand_id);
+        // console.log(price);
+        // let js = {item_name, brand_id, price, size, season,
+        //     content, category_1, category_2, item_status, fullbox,
+        //     warantee, domestic, refund} = req.body;
+        // console.log(item_name);
+        // console.log(brand_id);
+        // console.log(price);
+        for(item_attr in item){
+            if(req.body[item_attr]!==undefined){
+                item[item_attr] = req.body[item_attr];
+            }
+        }
+        await query.patchItemByItemObj(item);
+        return res.status(200).json({message:"success"});
+
+    }
+    catch (err) {
+        return res.status(400).json(err);
+    }
+
+
+
 }
