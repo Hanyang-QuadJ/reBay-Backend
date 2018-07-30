@@ -68,13 +68,68 @@ exports.profileImageUpdate = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
     const {user_id} = req.params;
-    try{
+    try {
         user = await query.getUserByUserId(user_id);
         return res.status(200).json({
-           user
+            user
         })
     }
     catch (err) {
+        return res.status(400).json(err);
+    }
+}
+
+exports.createFollowingByUserId = async (req, res) => {
+    const {user_id} = req.params;
+    try {
+        result = await query.createFollow(req.decoded._id, user_id);
+        follower = await query.getUserByUserId(req.decoded._id);
+        console.log(follwer);
+        followed = await query.getUserByUserId(user_id);
+        message = follower.username + " 님이 당신을 팔로우 하기 시작했습니다.";
+        sendMessageResult = await query.sendMessage(followed.fcm_token, message);
+        await query.createNotification(3, followed.id, null, null, message)
+        return res.status(200).json({
+            result
+        })
+    }
+    catch(err) {
+        return res.status(400).json(err);
+    }
+}
+
+exports.getFollowings = async (req, res) => {
+    try {
+        console.log("!@#!@#!")
+        follows = await query.getFollowsByFollowerId(req.decoded._id);
+        followings = [];
+        for(follow of follows){
+            user = await query.getUserByUserId(follow.followed_id);
+            followings.push(user);
+        }
+        return res.status(200).json({
+            followings
+        })
+    }
+    catch(err) {
+        return res.status(400).json(err);
+    }
+}
+
+exports.getFollowers = async (req, res) => {
+    try {
+        follows = await query.getFollowsByFollowedId(req.decoded._id);
+        followers = [];
+        for(follow of follows){
+
+            user = await query.getUserByUserId(follow.follower_id);
+            followers.push(user);
+        }
+        return res.status(200).json({
+            followers
+        })
+    }
+    catch(err) {
         return res.status(400).json(err);
     }
 }

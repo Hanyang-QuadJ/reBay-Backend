@@ -98,20 +98,33 @@ exports.createTemp = (item_id, user_id) => {
 }
 
 exports.createNotification = (type, user_id, item_id, help_id, message) => {
-    console.log("!!!");
     return new Promise((resolve, reject) => {
-        conn.query('INSERT INTO Notifications(type,user_id,item_id,help_id,message) VALUES(?,?,?,?,?)',
-            [type, user_id, item_id, help_id, message],
-            (err, result) => {
-                if (err) {
-                    reject(err);
-                    console.log("@@@@@@@@@@@@");
-                }
-                else {
-                    console.log("@@@@@@@@@@@");
-                    resolve(result);
-                }
-            });
+        if (item_id !== null) {
+            conn.query('INSERT INTO Notifications(type,user_id,item_id,help_id,message) VALUES(?,?,?,?,?)',
+                [type, user_id, item_id, help_id, message],
+                (err, result) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(result);
+                    }
+                });
+        }
+        else{
+            conn.query('INSERT INTO Notifications(type,user_id,message) VALUES(?,?,?)',
+                [type, user_id, message],
+                (err, result) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(result);
+                    }
+                });
+        }
+
+
     });
 }
 
@@ -166,6 +179,19 @@ exports.createLike = (item_id, user_id) => {
         )
     });
 }
+
+exports.createFollow = (follower_id, followed_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(
+            'INSERT INTO Follows(follower_id, followed_id) VALUES(?, ?)',
+            [follower_id, followed_id],
+            (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+            }
+        )
+    });
+}
 //-----------------------------------------------get-----------------------------------------------
 //-----------------------------------------------get-----------------------------------------------
 //-----------------------------------------------get-----------------------------------------------
@@ -188,6 +214,24 @@ exports.checkIsLiked = (user_id, item_id) => {
             }
         )
     })
+}
+
+exports.getFollowsByFollowerId = (follower_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Follows WHERE follower_id = ${follower_id}`, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
+}
+
+exports.getFollowsByFollowedId = (followed_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM Follows WHERE followed_id = ${followed_id}`, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
 }
 
 exports.getUserByUserId = (id) => {
