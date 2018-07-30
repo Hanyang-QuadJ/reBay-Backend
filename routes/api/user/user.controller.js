@@ -49,7 +49,7 @@ exports.soldlist = async (req, res) => {
 }
 
 exports.profileImageUpload = async (req, res) => {
-    const { base64 } = req.body;
+    const {base64} = req.body;
     try {
         await query.uploadProfileImage(base64, req.decoded._id);
     } catch (err) {
@@ -58,10 +58,23 @@ exports.profileImageUpload = async (req, res) => {
 }
 
 exports.profileImageUpdate = async (req, res) => {
-    const { base64 } = req.body;
+    const {base64} = req.body;
     try {
         await query.uploadProfileImage(base64, req.decoded._id);
     } catch (err) {
+        return res.status(400).json(err);
+    }
+}
+
+exports.getUserById = async (req, res) => {
+    const {user_id} = req.params;
+    try{
+        user = await query.getUserByUserId(user_id);
+        return res.status(200).json({
+           user
+        })
+    }
+    catch (err) {
         return res.status(400).json(err);
     }
 }

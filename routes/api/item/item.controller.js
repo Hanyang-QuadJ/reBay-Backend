@@ -205,6 +205,23 @@ exports.getSellList = async (req, res) => {
     }
 }
 
+exports.getItemsByUserId = async (req, res) => {
+    const {user_id} = req.params;
+    try {
+        const items = await query.getItemsByUserId(user_id);
+        for (let item of items) {
+            item.image = await query.getImageByItemId(item.id);
+            item.brand = await query.getBrandById(item.brand_id);
+        }
+        return res.status(200).json({
+            items
+        })
+    }
+    catch (err) {
+        return res.status(400).json(err);
+    }
+}
+
 exports.itemLike = async (req, res) => {
     const {item_id} = req.params;
     try {
@@ -296,7 +313,7 @@ exports.getAskItems = async (req, res) => {
 }
 
 exports.patchItemById = async (req, res) => {
-    try{
+    try {
         const {item_id} = req.params;
         item = await query.getItemById(item_id);
         // let {item_name, brand_id, price, size, season,
@@ -311,19 +328,18 @@ exports.patchItemById = async (req, res) => {
         // console.log(item_name);
         // console.log(brand_id);
         // console.log(price);
-        for(item_attr in item){
-            if(req.body[item_attr]!==undefined){
+        for (item_attr in item) {
+            if (req.body[item_attr] !== undefined) {
                 item[item_attr] = req.body[item_attr];
             }
         }
         await query.patchItemByItemObj(item);
-        return res.status(200).json({message:"success"});
+        return res.status(200).json({message: "success"});
 
     }
     catch (err) {
         return res.status(400).json(err);
     }
-
 
 
 }

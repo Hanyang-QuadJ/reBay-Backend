@@ -19,6 +19,7 @@ router.delete('/temp/:temp_id', controller.deleteTemp);
 router.get('/asked',controller.getAskedItems);
 router.get('/ask',controller.getAskItems);
 
+router.get('/:user_id',controller.getItemsByUserId);
 router.patch('/:item_id',controller.patchItemById)
 module.exports = router;
 
