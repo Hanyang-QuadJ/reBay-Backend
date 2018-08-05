@@ -133,3 +133,44 @@ exports.getFollowers = async (req, res) => {
         return res.status(400).json(err);
     }
 }
+
+exports.checkFollower = async (req, res) => {
+    const {user_id} = req.params;
+    try{
+        follows = await query.getFollowsByFollowedId(req.decoded._id);
+        for(follow of follows){
+            if(follow.follower_id == user_id){
+                return res.status(200).json({
+                    message:true
+                })
+            }
+        }
+        return res.status(200).json({
+            message:false
+        })
+    }
+    catch(err) {
+        return res.status(400).json(err);
+    }
+}
+
+exports.checkFollowing = async (req, res) => {
+    const {user_id} = req.params;
+    try{
+        follows = await query.getFollowsByFollowerId(req.decoded._id);
+        // console.log(follows);
+        for(follow of follows){
+            if(follow.followed_id == user_id){
+                return res.status(200).json({
+                    message:true
+                })
+            }
+        }
+        return res.status(200).json({
+            message:false
+        })
+    }
+    catch(err) {
+        return res.status(400).json(err);
+    }
+}

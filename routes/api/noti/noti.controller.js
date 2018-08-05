@@ -22,11 +22,17 @@ exports.getNotificationsByUserId = async(req, res) => {
     try {
         const notifications = await query.getNotificationsByUserId(user_id);
         for(notification of notifications){
-            help = await query.getHelpById(notification.help_id);
-            user = await query.getUserByUserId(help.user_id);
-            seller = await query.getUserByUserId(help.seller_id);
-            notification.user = user;
-            notification.seller = seller;
+            if(notification.type == 1 || notification.type == 2) {
+                help = await query.getHelpById(notification.help_id);
+                user = await query.getUserByUserId(help.user_id);
+                seller = await query.getUserByUserId(help.seller_id);
+                notification.user = user;
+                notification.seller = seller;
+            }
+            else {
+                user = await query.getUserByUserId(notification.user_id);
+                notification.user = user;
+            }
         }
         return res.status(200).json(notifications);
     } catch (err) {

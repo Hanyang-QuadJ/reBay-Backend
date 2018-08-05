@@ -99,8 +99,8 @@ exports.createTemp = (item_id, user_id) => {
 
 exports.createNotification = (type, user_id, item_id, help_id, message) => {
     return new Promise((resolve, reject) => {
-        if (item_id !== null) {
-            conn.query('INSERT INTO Notifications(type,user_id,item_id,help_id,message) VALUES(?,?,?,?,?)',
+        if (type === 1) {
+            conn.query('INSERT INTO Notifications(type,user_id,item_id,help_id) VALUES(?,?,?,?)',
                 [type, user_id, item_id, help_id, message],
                 (err, result) => {
                     if (err) {
