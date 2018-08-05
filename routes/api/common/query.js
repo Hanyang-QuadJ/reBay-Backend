@@ -11,6 +11,47 @@ const fcm = new FCM(serverKey);
 const json = (obj) => {
     return JSON.parse(JSON.stringify(obj));
 }
+const c = require('../../../config.json');
+const https = require("https");
+
+exports.sendTextMessage = (phone_num, verification_code) => {
+    let credential = 'Basic ' + new Buffer(c.APPID + ':' + c.APIKEY).toString('base64');
+    let data = {
+        "sender": c.SENDER,
+        "receivers": [`${phone_num}`],
+        "content": `reBay 인증번호는 [${verification_code}] 입니다.`
+    }
+    let body = JSON.stringify(data);
+
+    let options = {
+        host: 'api.bluehouselab.com',
+        port: 443,
+        path: '/smscenter/v1.0/sendsms',
+        headers: {
+            'Authorization': credential,
+            'Content-Type': 'application/json; charset=utf-8',
+            'Content-Length': Buffer.byteLength(body)
+        },
+        method: 'POST'
+    };
+    let req = https.request(options, function (res) {
+        let body = "";
+        res.on('data', function (d) {
+            body += d;
+        });
+        res.on('end', function (d) {
+            if (res.statusCode == 200)
+                console.log(JSON.parse(body));
+            else
+                console.log(body);
+        });
+    });
+    req.write(body);
+    req.end();
+    req.on('error', function (e) {
+        reject(e);
+    });
+}
 
 exports.renewFcmtoken = (user_id, fcm_token) => {
     return new Promise((resolve, reject) => {
@@ -28,7 +69,7 @@ exports.renewFcmtoken = (user_id, fcm_token) => {
 }
 
 exports.sendMessage = (token, body) => {
-    const message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+    const message = { //this may lety according to the message type (single recipient, multicast, topic, et cetera)
         to: token,
         collapse_key: 'your_collapse_key',
         notification: {
