@@ -136,7 +136,7 @@ exports.createTemp = (item_id, user_id) => {
             }
         });
     });
-}
+};
 
 exports.createNotification = (type, user_id, item_id, help_id, message) => {
     return new Promise((resolve, reject) => {
